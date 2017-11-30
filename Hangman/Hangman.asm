@@ -37,15 +37,18 @@ targetWord BYTE 100 DUP(0)
 promptGuess BYTE "Input the letter you would like to guess: ",0
 currentGuess BYTE 0
 
+alphabet BYTE "ABCDEFGHIJKLMNOPQRSTUVWXYZ",0
+alphaLeft BYTE "ABCDEFGHIJKLMNOPQRSTUVWXYZ",0
+
 .code
 
-;CallAndResponse uses eax, ecx, and edx
+;CallAndResponseString uses eax, ecx, and edx
 ;It requires three parameters pushed to the stack:
 ;	address of the prompt you wish to display
 ;	address where you wish to store the answerAddress
 ;	max length of the answer
 ;It then displays the prompt and stores the answer
-CallAndResponse proc USES eax ecx edx,
+CallAndResponseString proc USES eax ecx edx,
 	promptAddress:DWORD,
 	answerAddress:DWORD,
 	answerMaxSize:DWORD
@@ -56,37 +59,54 @@ CallAndResponse proc USES eax ecx edx,
 	mov ecx, answerMaxSize
 	call ReadString
 	ret
-CallAndResponse endp
+CallAndResponseString endp
+
+;CallAndResponseInt uses eax, ecx, and edx
+;It requires three parameters pushed to the stack:
+;	address of the prompt you wish to display
+;	address where you wish to store the answerAddress
+;	max length of the answer
+;It then displays the prompt and stores the answer
+CallAndResponseInt proc USES eax ecx edx,
+	promptAddress:DWORD,
+	answerAddress:DWORD
+
+	mov edx, promptAddress
+	call WriteString
+	call ReadInt
+	mov ecx, answerAddress
+	mov [ecx], eax
+	ret
+CallAndResponseInt endp
+
 
 ;Uses CallAndResponse to store the name for each player
 GetNames proc
 	push nameMaxLength
 	push OFFSET player1Name
 	push OFFSET promptNamePlayer1
-	Call CallAndResponse
+	Call CallAndResponseString
 	
 	push nameMaxLength
 	push OFFSET player2Name
 	push OFFSET promptNamePlayer2
-	Call CallAndResponse
+	Call CallAndResponseString
 	ret
 GetNames endp
 
 ;Uses CallAndResponse to store the maximum word length for this session
 GetWordMaxLength proc
-	push defaultMaxAnswerLength
 	push OFFSET wordMaxLength
 	push OFFSET promptWordMaxLength
-	call CallAndResponse
+	call CallAndResponseInt
 	ret
 GetWordMaxLength endp
 
 ;Uses CallAndResponse to store the winning score for this session
 GetWinningScore proc
-	push defaultMaxAnswerLength
 	push OFFSET winningScore
 	push OFFSET promptWinningScore
-	call CallAndResponse
+	call CallAndResponseInt
 	ret
 GetWinningScore endp
 
@@ -95,22 +115,32 @@ GetTargetWord proc
 	push wordMaxLength
 	push OFFSET targetWord
 	push OFFSET promptTargetWord
-	call CallAndResponse
+	call CallAndResponseString
 	ret
 GetTargetWord endp
 
 ;Gets a letter from the guesser and store it in currentGuess
 GetGuess proc
+	;First we need to get the guess from the user
 	mov edx, OFFSET promptGuess
 	call WriteString
-	call ReadChar
-	mov currentGuess, al
+	call ReadChar			;store the guess in al
+	and al, 0DFh			;render the letter uppercase
+	mov currentGuess, al	;store the uppercase letter in currentGuess
 	ret
 GetGuess endp
 
 
-CheckGuess proc
-
+CheckGuess proc USES eax
+	;Find the index of the letter
+	xor eax, eax
+	mov al, currentGuess
+	sub al, 41h				;A is alphabet[0] with ASCII code 41h
+	;check to see whether it has been guessed yet
+	mov ah, alphaLeft[eax]
+	mov al, ah
+	call WriteChar
+	ret
 CheckGuess endp
 
 TestGetNames proc
@@ -132,8 +162,8 @@ TestGetWordMaxLength proc
 	call GetWordMaxLength
 	mov edx, OFFSET wordMaxLengthSugar
 	call WriteString
-	mov edx, OFFSET wordMaxLength
-	call WriteString
+	mov eax, wordMaxLength
+	call WriteDec
 	call Crlf
 	ret
 TestGetWordMaxLength endp
@@ -142,8 +172,8 @@ TestGetWinningScore proc
 	call GetWinningScore
 	mov edx, OFFSET winningScoreSugar
 	call WriteString
-	mov edx, OFFSET winningScore
-	call WriteString
+	mov eax, winningScore
+	call WriteDec
 	call Crlf
 	ret
 TestGetWinningScore endp
@@ -160,12 +190,11 @@ TestGetTargetWord endp
 
 TestGetGuess proc
 	call GetGuess
-	mov edx, OFFSET guessSugar
-	call WriteString
 	xor eax, eax
 	mov al, currentGuess
 	call WriteChar
 	call Crlf
+	call CheckGuess
 	ret
 TestGetGuess endp
 
