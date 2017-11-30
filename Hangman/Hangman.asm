@@ -40,8 +40,372 @@ currentGuess BYTE 0
 alphabet BYTE "ABCDEFGHIJKLMNOPQRSTUVWXYZ",0
 alphaLeft BYTE "ABCDEFGHIJKLMNOPQRSTUVWXYZ",0
 
-.code
+; ascii data, start x and y coordinates 
+starty byte 0
+startx byte 0
 
+.code
+DrawHangman proc uses edx eax 
+; hanger thing
+	mov dh, starty
+	add dh, 1
+	mov dl, startx
+	add dl, 6
+
+	call Gotoxy
+	mov al, 7Ch
+	call WriteChar
+
+; torque
+	mov dh, starty
+	mov dl, startx 
+	add dl, 7
+
+	call Gotoxy
+	mov al, 5Fh
+	call WriteChar
+
+	mov dh, starty
+	mov dl, startx
+	add dl, 8
+
+	call Gotoxy
+	mov al, 5Fh
+	call WriteChar
+
+	mov dh, starty
+	mov dl, startx
+	add dl, 9
+
+	call Gotoxy
+	mov al, 5Fh
+	call WriteChar
+
+	mov dh, starty
+	mov dl, startx
+	add dl, 10
+
+	call Gotoxy
+	mov al, 5Fh
+	call WriteChar
+
+	mov dh, starty
+	mov dl, startx
+	add dl, 11
+
+	call Gotoxy
+	mov al, 5Fh
+	call WriteChar
+	
+	mov dh, starty
+	mov dl, startx
+	add dl, 12
+
+	call Gotoxy
+	mov al, 5Fh
+	call WriteChar
+
+	mov dh, starty
+	add dh, 1
+	mov dl, startx
+	add dl, 13
+
+	call Gotoxy
+	mov al, 7Ch
+	call WriteChar
+
+	mov dh, starty
+	add dh, 2
+	mov dl, startx
+	add dl, 13
+
+	call Gotoxy
+	mov al, 7Ch
+	call WriteChar
+
+	mov dh, starty
+	add dh, 3
+	mov dl, startx
+	add dl, 13
+
+	call Gotoxy
+	mov al, 7Ch
+	call WriteChar
+
+	mov dh, starty
+	add dh, 4
+	mov dl, startx
+	add dl, 13
+
+	call Gotoxy
+	mov al, 7Ch
+	call WriteChar
+
+	mov dh, starty
+	add dh, 5
+	mov dl, startx
+	add dl, 13
+
+	call Gotoxy
+	mov al, 7Ch
+	call WriteChar
+
+	mov dh, starty
+	add dh, 6
+	mov dl, startx
+	add dl, 13
+
+	call Gotoxy
+	mov al, 7Ch
+	call WriteChar
+
+	mov dh, starty
+	add dh, 7
+	mov dl, startx
+	add dl, 13
+
+	call Gotoxy
+	mov al, 7Ch
+	call WriteChar
+
+	mov dh, starty
+	add dh, 8
+	mov dl, startx
+	add dl, 13
+
+	call Gotoxy
+	mov al, 7Ch
+	call WriteChar
+
+	mov dh, starty
+	add dh, 9
+	mov dl, startx
+	add dl, 13
+
+	call Gotoxy
+	mov al, 7Ch
+	call WriteChar
+
+	mov dh, starty
+	add dh, 8
+	mov dl, startx
+	add dl, 13
+
+	call Gotoxy
+	mov al, 7Ch
+	call WriteChar
+
+; head 
+	mov dh, starty
+	add dh, 2
+	mov dl, startx
+	add dl, 6
+	 
+	call Gotoxy
+	mov al, 4Fh 
+	call WriteChar 
+
+; body
+	mov dh, starty 
+	add dh, 3
+	mov dl, startx 
+	add dl, 6
+
+	call Gotoxy
+	mov al, 7Ch
+	call WriteChar
+
+; left first arm 
+	mov dh, starty 
+	add dh, 3
+	mov dl, startx
+	add dl, 5
+
+	call Gotoxy
+	mov al, 2Fh
+	call WriteChar
+
+; right first arm 
+	mov dh, starty
+	add dh, 3 
+	mov dl, startx 
+	add dl, 7
+
+	call Gotoxy
+	mov al, 5Ch
+	call WriteChar
+
+; left second arm 
+	mov dh, starty 
+	add dh, 4
+	mov dl, startx
+	add dl, 4
+
+	call Gotoxy
+	mov al, 2Fh
+	call WriteChar
+
+; right second arm 
+	mov dh, starty
+	add dh, 4 
+	mov dl, startx 
+	add dl, 8
+
+	call Gotoxy
+	mov al, 5Ch
+	call WriteChar
+
+; second body part
+	mov dh, starty
+	add dh, 4 
+	mov dl, startx 
+	add dl, 6
+	
+	call Gotoxy
+	mov al, 7Ch
+	call WriteChar
+
+	
+; first left leg part
+	mov dh, starty
+	add dh, 5
+	mov dl, startx
+	add dl, 5
+
+	call Gotoxy
+	mov al, 2Fh
+	call WriteChar
+
+; second left leg part
+	mov dh, starty 
+	add dh, 6
+	mov dl, startx
+	add dl, 4
+
+	call Gotoxy
+	mov al, 2Fh
+	call WriteChar
+
+; first right leg part
+	mov dh, starty
+	add dh, 5
+	mov dl, startx 
+	add dl, 7
+
+	call Gotoxy
+	mov al, 5Ch
+	call WriteChar
+
+; second right leg part
+	mov dh, starty 
+	add dh, 6
+	mov dl, startx
+	add dl, 8
+
+	call Gotoxy
+	mov al, 5Ch
+	call WriteChar
+
+; left foot 
+	mov dh, starty 
+	add dh, 6
+	mov dl, startx
+	add dl, 3
+
+	call Gotoxy
+	mov al, 5Fh
+	call WriteChar
+
+; right foot  
+	mov dh, starty
+	add dh, 6
+	mov dl, startx
+	add dl, 9
+
+	call Gotoxy
+	mov al, 5Fh
+	call WriteChar
+
+; continue of the hanger
+	mov dh, starty
+	add dh, 9
+	mov dl, startx
+	add dl, 9
+
+	call Gotoxy
+	mov al, 5Fh
+	call WriteChar
+
+	mov dh, starty
+	add dh, 9
+	mov dl, startx
+	add dl, 10
+
+	call Gotoxy
+	mov al, 5Fh
+	call WriteChar
+
+	mov dh, starty
+	add dh, 9
+	mov dl, startx
+	add dl, 11
+
+	call Gotoxy
+	mov al, 5Fh
+	call WriteChar
+
+	mov dh, starty
+	add dh, 9
+	mov dl, startx
+	add dl, 12
+
+	call Gotoxy
+	mov al, 5Fh
+	call WriteChar
+
+	mov dh, starty
+	add dh, 9
+	mov dl, startx
+	add dl, 14
+
+	call Gotoxy
+	mov al, 5Fh
+	call WriteChar
+
+	
+	mov dh, starty
+	add dh, 9
+	mov dl, startx
+	add dl, 15
+
+	call Gotoxy
+	mov al, 5Fh
+	call WriteChar
+
+	mov dh, starty
+	add dh, 9
+	mov dl, startx
+	add dl, 16
+
+	call Gotoxy
+	mov al, 5Fh
+	call WriteChar
+
+	mov dh, starty
+	add dh, 9
+	mov dl, startx
+	add dl, 17
+
+	call Gotoxy
+	mov al, 5Fh
+	call WriteChar
+
+
+
+	call crlf 
+
+ret 
+DrawHangman endp
 ;CallAndResponseString uses eax, ecx, and edx
 ;It requires three parameters pushed to the stack:
 ;	address of the prompt you wish to display
