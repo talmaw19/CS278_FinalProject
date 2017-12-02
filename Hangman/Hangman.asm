@@ -33,9 +33,18 @@ winningScore DWORD 0
 
 promptTargetWord BYTE "Input the target word: ",0
 targetWord BYTE 100 DUP(0)
+displayWord BYTE 100 DUP(0)
+targetWordLength DWORD 0
+
 
 promptGuess BYTE "Input the letter you would like to guess: ",0
 currentGuess BYTE 0
+
+failState DWORD 0
+successState DWORD 0
+maxFailure DWORD 6
+messageFail BYTE "With a horrible snap, your virtual avatar's neck gives way to gravity's ceaseless urging.",0
+messageSuccess BYTE "They laughed at you, but you always knew those neck curls would prove useful. The rope gives way before your neck does and you live to play again.",0
 
 alphabet BYTE "ABCDEFGHIJKLMNOPQRSTUVWXYZ",0
 alphaLeft BYTE "ABCDEFGHIJKLMNOPQRSTUVWXYZ",0
@@ -406,6 +415,8 @@ DrawHangman proc uses edx eax
 
 ret 
 DrawHangman endp
+
+
 ;CallAndResponseString uses eax, ecx, and edx
 ;It requires three parameters pushed to the stack:
 ;	address of the prompt you wish to display
@@ -474,12 +485,21 @@ GetWinningScore proc
 	ret
 GetWinningScore endp
 
-;Uses CallAndResponse to store the target word for this round
-GetTargetWord proc
-	push wordMaxLength
-	push OFFSET targetWord
-	push OFFSET promptTargetWord
-	call CallAndResponseString
+;Stores the target word and its length for this round
+GetTargetWord proc uses eax ecx edx esi
+	mov edx, OFFSET promptTargetWord
+	call WriteString
+	mov edx, OFFSET targetWord
+	mov ecx, wordMaxLength
+	call ReadString
+	mov targetWordLength, eax	;Store the length of the word
+	mov ecx, eax				;copy the word length to our loop counter
+	xor esi, esi				;zero our index
+CopyTargetToDisplay:
+	mov al, targetWord[esi]		;copy character from targetWord
+	mov displayWord[esi], al	;...and write it to displayWord
+	inc esi						;increment index
+loop CopyTargetToDisplay
 	ret
 GetTargetWord endp
 
@@ -495,17 +515,69 @@ GetGuess proc
 GetGuess endp
 
 
-CheckGuess proc USES eax
-	;Find the index of the letter
+CheckGuess proc USES eax ebx ecx edx esi
 	xor eax, eax
+	xor ebx, ebx
+	xor edx, edx
 	mov al, currentGuess
-	sub al, 41h				;A is alphabet[0] with ASCII code 41h
-	;check to see whether it has been guessed yet
-	mov ah, alphaLeft[eax]
-	mov al, ah
-	call WriteChar
+	mov ecx, targetWordLength	;load our loop counter
+	xor esi, esi				;zero our index
+WalkTargetWord:
+	cmp targetWord[esi], al		;compare the letter in targetWord with the guess in al
+	sete bl				;If the guess equals the target letter we have a hit, so set bl to 1
+	add dx, bx			;Add the success bit to our running total
+	xor ebx, ebx		;clear our success marker
+	inc esi
+loop WalkTargetWord
+	cmp edx, 1				;Check to see if we found any matches
+	setb bl					;If no matches, set bl
+	setl bl
+	add failState, ebx		;Add 1 to failState if we found no matches
+	add successState, edx	;Add any successes to the success state
+	sub al, 41h				;Find the index of the letter in alphabet/Left (A is alphabet[0] with ASCII code 41h)
+	mov alphaLeft[eax], 0	;Zero the guesses letter in alphaLeft
+	;call WriteChar
 	ret
 CheckGuess endp
+
+OutputGuesses proc USES eax ebx ecx esi
+	mov ecx, 26				;Need to check 26 letters
+	xor esi, esi			;Zero our index
+	xor ebx, ebx			;We will need a zero register
+WalkAlphaleft:
+	mov al, alphabet[esi]	
+	mov ah, alphaLeft[esi]
+	cmp ah, al				;Compare the letter at the index in both 'bet and 'left
+	cmove eax, ebx 			;If they're the same, the letter has not been guessed so we want to output... nothing
+	call WriteChar			;Output the either the letter or nothing
+	mov al, 20h				;Output a space
+	call WriteChar
+	inc esi					;increment loop counter
+loop WalkAlphaleft
+	ret
+OutputGuesses endp
+
+;Note that we use branching logic here.
+;Since all of the values are set before the proc is called
+;we should avoid any branch prediction issues
+CheckState proc uses eax edx
+	mov eax, failState			;load the failure count into eax
+	cmp eax, maxFailure			;and compare it with the maximum failure count
+	jle NoFail					;If we're below the max, check if we have succeeded
+	mov edx, OFFSET messageFail		;Otherwise prep the failure message
+	jmp Output					;And skip to the output step
+NoFail:
+	mov eax, successState		;Load the current number of successfully guessed letters
+	cmp eax, targetWordLength	;and compare it with the total number of letters in the word
+	jl Fini						;If the correct letters are fewer than the total letters, we ain't done yet. Skip to the end
+	mov edx, OFFSET messageSuccess		;Otherwise, the guesser has won so load the success message
+	;jmp Output					;Don't currently need to jump to Output, but if this order changes we may
+Output:
+	call WriteString			;Output fail or success message
+	call Crlf
+Fini:
+	ret
+CheckState endp
 
 TestGetNames proc
 	call GetNames
@@ -562,6 +634,18 @@ TestGetGuess proc
 	ret
 TestGetGuess endp
 
+TestGuesses proc
+	call GetTargetWord				;Get a target word
+	mov ecx, 10						;give us ten guesses
+TestGuessLoop:
+	call GetGuess					;Get a guess
+	call CheckGuess					;Check it
+	call OutputGuesses				;Output the current list of guesses
+	call Crlf
+loop TestGuessLoop
+	ret
+TestGuesses endp
+
 TestIo PROC
 	;call TestGetNames
 	call TestGetWordMaxLength
@@ -571,8 +655,36 @@ TestIo PROC
 	ret
 TestIo ENDP
 
+
+TestGameLogic proc
+	call TestGuesses
+	ret
+TestGameLogic endp	
+
+TestGame proc
+	call GetTargetWord
+	mov ecx, 100
+GameLoop:
+	call GetGuess
+	call CheckGuess
+	call Crlf
+	call OutputGuesses
+	call Crlf
+	mov eax, failState
+	call WriteInt
+	call Crlf
+	mov eax, successState
+	call WriteInt
+	call Crlf
+	call CheckState
+loop GameLoop
+	ret
+TestGame endp
+
 main proc
-	call TestIo
+	;call TestIo
+	;call TestGameLogic
+	call TestGame
 	invoke ExitProcess,0
 main endp
 end main
