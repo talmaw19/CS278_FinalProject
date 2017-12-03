@@ -39,6 +39,7 @@ targetWordLength DWORD 0
 
 promptGuess BYTE "Input the letter you would like to guess: ",0
 currentGuess BYTE 0
+messageAlreadyGuessed BYTE "That letter was already guessed.",0
 
 failState DWORD 0
 successState DWORD 0
@@ -495,11 +496,12 @@ GetTargetWord proc uses eax ecx edx esi
 	mov targetWordLength, eax	;Store the length of the word
 	mov ecx, eax				;copy the word length to our loop counter
 	xor esi, esi				;zero our index
-CopyTargetToDisplay:
-	mov al, targetWord[esi]		;copy character from targetWord
+	mov al, 5fh					;load al with the ASCII code for underscore
+CreateDisplayWord:
 	mov displayWord[esi], al	;...and write it to displayWord
+	and targetWord[esi], 0DFh	;And while we're at it, let's make targetWord uppercase for ease of comparison
 	inc esi						;increment index
-loop CopyTargetToDisplay
+loop CreateDisplayWord
 	ret
 GetTargetWord endp
 
@@ -515,28 +517,44 @@ GetGuess proc
 GetGuess endp
 
 
-CheckGuess proc USES eax ebx ecx edx esi
-	xor eax, eax
-	xor ebx, ebx
-	xor edx, edx
+CheckGuess proc USES eax ebx ecx edx edi esi
+	xor eax, eax				;clear eax
+	xor edx, edx				;clear edx
+	xor edi, edi				;clear edi, will be our running total of characters in the target word matched by guess
 	mov al, currentGuess
+	;First we need to see if the letter has already been guessed
+	mov bl, al					;Use bl to compare the guess to the index character in alphaLeft
+	sub al, 41h					;Subtract 41h from the guess's ASCII code to convert the code to an index on alphaLeft		
+	cmp	bl, alphaLeft[eax]
+	je Unguessed				;If they're the same (ZF set), the letter has not been previously guessed.
+	mov edx, OFFSET messageAlreadyGuessed	;otherwise the letter has been previously guessed
+	call WriteString			;So tell them
+	jmp finish					;and exit -- If we combine GetGuess with CheckGuess, we can instead jump back and ask for another guess
+Unguessed:	
+	mov alphaLeft[eax], 0		;Zero the guesses letter in alphaLeft
+	xor ebx, ebx				;clear ebx
 	mov ecx, targetWordLength	;load our loop counter
 	xor esi, esi				;zero our index
+	add al, 41h					;restore our index to its ASCII char equivalent
+	;Next we need to see if the target word contains any instances of the guess
 WalkTargetWord:
 	cmp targetWord[esi], al		;compare the letter in targetWord with the guess in al
-	sete bl				;If the guess equals the target letter we have a hit, so set bl to 1
-	add dx, bx			;Add the success bit to our running total
-	xor ebx, ebx		;clear our success marker
+	sete dl						;If there's a match, set dl to 1, otherwise dl is 0
+	mov bl, displayWord[esi]	;load bl with the character in displayWord
+	cmove ebx, eax				;if the guess is correct, replace the default value in bl
+	mov displayWord[esi], bl	;load either the correct guess or the default character back into displayWord
+	xor ebx, ebx				;clear ebx
+	add di, dx					;Add the success bit to our running total
+	xor edx, edx				;clear our success marker
 	inc esi
 loop WalkTargetWord
-	cmp edx, 1				;Check to see if we found any matches
-	setb bl					;If no matches, set bl
+	cmp edi, 1					;Check to see if we found any matches
+	setb bl						;If no matches, set bl
 	setl bl
-	add failState, ebx		;Add 1 to failState if we found no matches
-	add successState, edx	;Add any successes to the success state
-	sub al, 41h				;Find the index of the letter in alphabet/Left (A is alphabet[0] with ASCII code 41h)
-	mov alphaLeft[eax], 0	;Zero the guesses letter in alphaLeft
+	add failState, ebx			;Add 1 to failState if we found no matches
+	add successState, edi		;Add any successes to the success state
 	;call WriteChar
+finish:
 	ret
 CheckGuess endp
 
@@ -556,6 +574,17 @@ WalkAlphaleft:
 loop WalkAlphaleft
 	ret
 OutputGuesses endp
+
+OutputDisplayWord proc uses eax ecx esi
+	mov ecx, targetWordLength	;load our loop counter
+	xor esi, esi				;clear our index
+WalkDisplayWord:				;walk the display word and output each character
+	mov al, displayWord[esi]
+	call WriteChar
+	inc esi
+loop WalkDisplayWord
+	ret
+OutputDisplayWord endp
 
 ;Note that we use branching logic here.
 ;Since all of the values are set before the proc is called
@@ -666,9 +695,13 @@ TestGame proc
 	mov ecx, 100
 GameLoop:
 	call GetGuess
+	call WriteChar
+	call Crlf
 	call CheckGuess
 	call Crlf
 	call OutputGuesses
+	call Crlf
+	call OutputDisplayWord
 	call Crlf
 	mov eax, failState
 	call WriteInt
