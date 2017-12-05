@@ -55,8 +55,8 @@ starty byte 0
 startx byte 0
 
 .code
-DrawHangman proc uses edx eax 
-; hanger thing
+DrawHangman proc uses edx eax ebx ecx
+; gallows
 	mov dh, starty
 	add dh, 1
 	mov dl, startx
@@ -114,7 +114,7 @@ DrawHangman proc uses edx eax
 	call Gotoxy
 	mov al, 5Fh
 	call WriteChar
-
+; 
 	mov dh, starty
 	add dh, 1
 	mov dl, startx
@@ -206,7 +206,13 @@ DrawHangman proc uses edx eax
 	call WriteChar
 
 ; head 
-	mov dh, starty
+	xor ebx, ebx
+	mov ecx, failState
+	inc ebx				;We want to draw the head if failState >= 1
+	cmp ecx, ebx
+	jl fini				;If failState < 1 skip to the end
+
+	mov dh, starty		;Otherwise, draw the head
 	add dh, 2
 	mov dl, startx
 	add dl, 6
@@ -216,7 +222,11 @@ DrawHangman proc uses edx eax
 	call WriteChar 
 
 ; body
-	mov dh, starty 
+	inc ebx				;We want to draw the body if failState >= 2
+	cmp ecx, ebx
+	jl fini				;If failState < 2, jump to the end
+	
+	mov dh, starty		;Otherwise, draw the body
 	add dh, 3
 	mov dl, startx 
 	add dl, 6
@@ -414,7 +424,8 @@ DrawHangman proc uses edx eax
 
 	call crlf 
 
-ret 
+fini:
+	ret 
 DrawHangman endp
 
 
@@ -604,7 +615,7 @@ NoFail:
 Output:
 	call WriteString			;Output fail or success message
 	call Crlf
-Fini:
+Fini: ; 
 	ret
 CheckState endp
 
@@ -714,10 +725,19 @@ loop GameLoop
 	ret
 TestGame endp
 
+TestHangedMan proc
+	mov startx, 10
+	mov starty, 10
+	mov failState, 1
+	call DrawHangman
+	ret
+TestHangedMan endp
+
 main proc
 	;call TestIo
 	;call TestGameLogic
-	call TestGame
+	;call TestGame
+	call TestHangedMan
 	invoke ExitProcess,0
 main endp
 end main
