@@ -478,6 +478,7 @@ GetNames proc
 	push OFFSET player2Name
 	push OFFSET promptNamePlayer2
 	Call CallAndResponseString
+	call Clrscr
 	ret
 GetNames endp
 
@@ -702,6 +703,7 @@ TestGameLogic proc
 TestGameLogic endp	
 
 TestGame proc
+	call GetNames
 	call GetTargetWord
 	mov ecx, 100
 GameLoop:
@@ -710,10 +712,11 @@ GameLoop:
 	call Crlf
 	call CheckGuess
 	call Crlf
-	call OutputGuesses
-	call Crlf
-	call OutputDisplayWord
-	call Crlf
+	call TestDisplayUI
+	;call OutputGuesses
+	;call Crlf
+	;call OutputDisplayWord
+	;call Crlf
 	mov eax, failState
 	call WriteInt
 	call Crlf
@@ -725,19 +728,465 @@ loop GameLoop
 	ret
 TestGame endp
 
+TestDisplayUI proc
+	call Clrscr
+
+; Top edge Players Name Boxes
+	mov dh, 0
+	mov dl, 1
+	call Gotoxy
+	mov al, 3Dh
+	call WriteChar
+	
+	add dl, 3
+	call Gotoxy
+	call WriteChar
+
+	add dl, 3
+	call Gotoxy
+	call WriteChar
+	
+	add dl, 3
+	call Gotoxy
+	call WriteChar
+
+	add dl, 3
+	call Gotoxy
+	call WriteChar
+	
+	add dl, 62
+	call Gotoxy
+	call WriteChar
+	
+	add dl, 3
+	call Gotoxy
+	call WriteChar
+
+	add dl, 3
+	call Gotoxy
+	call WriteChar
+	
+	add dl, 3
+	call Gotoxy
+	call WriteChar
+
+	add dl, 3
+	call Gotoxy
+	call WriteChar
+
+; side edges
+	add dh, 1
+	mov dl, 0
+	call Gotoxy
+	mov al, 7Ch
+	call WriteChar
+
+	add dl, 14
+	call Gotoxy
+	call WriteChar
+
+	add dl, 60
+	call Gotoxy
+	call WriteChar
+
+	add dl, 14
+	call Gotoxy
+	call WriteChar
+
+; bottom edge
+	mov dh, 2
+	mov dl, 1
+	call Gotoxy
+	mov al, 3Dh
+	call WriteChar
+	
+	add dl, 3
+	call Gotoxy
+	call WriteChar
+
+	add dl, 3
+	call Gotoxy
+	call WriteChar
+	
+	add dl, 3
+	call Gotoxy
+	call WriteChar
+
+	add dl, 3
+	call Gotoxy
+	call WriteChar
+	
+	add dl, 62
+	call Gotoxy
+	call WriteChar
+	
+	add dl, 3
+	call Gotoxy
+	call WriteChar
+
+	add dl, 3
+	call Gotoxy
+	call WriteChar
+	
+	add dl, 3
+	call Gotoxy
+	call WriteChar
+
+	add dl, 3
+	call Gotoxy
+	call WriteChar
+
+; insert names to boxes
+	mov dh, 1
+	mov dl, 4
+	call Gotoxy
+	mov edx, OFFSET player1Name
+	call WriteString
+
+	mov dh, 1
+	mov dl, 78
+	call Gotoxy
+	mov edx, OFFSET player2Name
+	call WriteString
+; Gallows/hangman
+	mov startx, 30
+	mov starty, 5
+	call Gotoxy
+	mov failstate, 5
+	call DrawHangman
+; box around guessed letters
+	mov dh, 16
+	mov dl, 15
+	Call Gotoxy
+	mov al, 3Dh
+	Call WriteChar
+
+	add dl, 2
+	Call Gotoxy
+	mov al, 3Dh
+	Call WriteChar
+
+	add dl, 2
+	Call Gotoxy
+	mov al, 3Dh
+	Call WriteChar
+
+	add dl, 2
+	Call Gotoxy
+	mov al, 3Dh
+	Call WriteChar
+
+	add dl, 2
+	Call Gotoxy
+	mov al, 3Dh
+	Call WriteChar
+
+	add dl, 2
+	Call Gotoxy
+	mov al, 3Dh
+	Call WriteChar
+
+	add dl, 2
+	Call Gotoxy
+	mov al, 3Dh
+	Call WriteChar
+
+	add dl, 2
+	Call Gotoxy
+	mov al, 3Dh
+	Call WriteChar
+
+	add dl, 2
+	Call Gotoxy
+	mov al, 3Dh
+	Call WriteChar
+
+	add dl, 2
+	Call Gotoxy
+	mov al, 3Dh
+	Call WriteChar
+
+	add dl, 2
+	Call Gotoxy
+	mov al, 3Dh
+	Call WriteChar
+
+	add dl, 2
+	Call Gotoxy
+	mov al, 3Dh
+	Call WriteChar
+
+	add dl, 2
+	Call Gotoxy
+	mov al, 3Dh
+	Call WriteChar
+
+	add dl, 2
+	Call Gotoxy
+	mov al, 3Dh
+	Call WriteChar
+
+	add dl, 2
+	Call Gotoxy
+	mov al, 3Dh
+	Call WriteChar
+
+	add dl, 2
+	Call Gotoxy
+	mov al, 3Dh
+	Call WriteChar
+
+	add dl, 2
+	Call Gotoxy
+	mov al, 3Dh
+	Call WriteChar
+
+	add dl, 2
+	Call Gotoxy
+	mov al, 3Dh
+	Call WriteChar
+
+	add dl, 2
+	Call Gotoxy
+	mov al, 3Dh
+	Call WriteChar
+
+	add dl, 2
+	Call Gotoxy
+	mov al, 3Dh
+	Call WriteChar
+
+	add dl, 2
+	Call Gotoxy
+	mov al, 3Dh
+	Call WriteChar
+
+	add dl, 2
+	Call Gotoxy
+	mov al, 3Dh
+	Call WriteChar
+
+	add dl, 2
+	Call Gotoxy
+	mov al, 3Dh
+	Call WriteChar
+
+	add dl, 2
+	Call Gotoxy
+	mov al, 3Dh
+	Call WriteChar
+
+	add dl, 2
+	Call Gotoxy
+	mov al, 3Dh
+	Call WriteChar
+
+	add dl, 2
+	Call Gotoxy
+	mov al, 3Dh
+	Call WriteChar
+
+	add dl, 2
+	Call Gotoxy
+	mov al, 3Dh
+	Call WriteChar
+
+	add dl, 2
+	Call Gotoxy
+	mov al, 3Dh
+	Call WriteChar
+
+	mov dh, 17
+	mov dl, 14
+	Call Gotoxy
+	mov al, 7ch
+	Call WriteChar
+
+	add dl, 56
+	Call Gotoxy
+	mov al, 7ch
+	Call WriteChar
+
+	mov dh, 18
+	mov dl, 15
+	Call Gotoxy
+	mov al, 3Dh
+	Call WriteChar
+
+	add dl, 2
+	Call Gotoxy
+	mov al, 3Dh
+	Call WriteChar
+
+	add dl, 2
+	Call Gotoxy
+	mov al, 3Dh
+	Call WriteChar
+
+	add dl, 2
+	Call Gotoxy
+	mov al, 3Dh
+	Call WriteChar
+
+	add dl, 2
+	Call Gotoxy
+	mov al, 3Dh
+	Call WriteChar
+
+	add dl, 2
+	Call Gotoxy
+	mov al, 3Dh
+	Call WriteChar
+
+	add dl, 2
+	Call Gotoxy
+	mov al, 3Dh
+	Call WriteChar
+
+	add dl, 2
+	Call Gotoxy
+	mov al, 3Dh
+	Call WriteChar
+
+	add dl, 2
+	Call Gotoxy
+	mov al, 3Dh
+	Call WriteChar
+
+	add dl, 2
+	Call Gotoxy
+	mov al, 3Dh
+	Call WriteChar
+
+	add dl, 2
+	Call Gotoxy
+	mov al, 3Dh
+	Call WriteChar
+
+	add dl, 2
+	Call Gotoxy
+	mov al, 3Dh
+	Call WriteChar
+
+	add dl, 2
+	Call Gotoxy
+	mov al, 3Dh
+	Call WriteChar
+
+	add dl, 2
+	Call Gotoxy
+	mov al, 3Dh
+	Call WriteChar
+
+	add dl, 2
+	Call Gotoxy
+	mov al, 3Dh
+	Call WriteChar
+
+	add dl, 2
+	Call Gotoxy
+	mov al, 3Dh
+	Call WriteChar
+
+	add dl, 2
+	Call Gotoxy
+	mov al, 3Dh
+	Call WriteChar
+
+	add dl, 2
+	Call Gotoxy
+	mov al, 3Dh
+	Call WriteChar
+
+	add dl, 2
+	Call Gotoxy
+	mov al, 3Dh
+	Call WriteChar
+
+	add dl, 2
+	Call Gotoxy
+	mov al, 3Dh
+	Call WriteChar
+
+	add dl, 2
+	Call Gotoxy
+	mov al, 3Dh
+	Call WriteChar
+
+	add dl, 2
+	Call Gotoxy
+	mov al, 3Dh
+	Call WriteChar
+
+	add dl, 2
+	Call Gotoxy
+	mov al, 3Dh
+	Call WriteChar
+
+	add dl, 2
+	Call Gotoxy
+	mov al, 3Dh
+	Call WriteChar
+
+	add dl, 2
+	Call Gotoxy
+	mov al, 3Dh
+	Call WriteChar
+
+	add dl, 2
+	Call Gotoxy
+	mov al, 3Dh
+	Call WriteChar
+
+	add dl, 2
+	Call Gotoxy
+	mov al, 3Dh
+	Call WriteChar
+
+	add dl, 2
+	Call Gotoxy
+	mov al, 3Dh
+	Call WriteChar
+
+; Output guesses
+	mov dh, 17
+	mov dl, 17
+	Call Gotoxy
+	call OutputGuesses
+
+	mov dh, 20
+	mov dl, 0
+	Call Gotoxy
+	
+; Display correct guesses
+	mov dh, 10
+	mov dl, 60
+	Call Gotoxy
+	Call OutputDisplayWord
+
+	mov dh, 20
+	mov dl, 0
+	Call Gotoxy
+
+	ret
+
+TestDisplayUI endp
+
 TestHangedMan proc
 	mov startx, 10
 	mov starty, 10
-	mov failState, 1
+	mov failState, 0
 	call DrawHangman
 	ret
 TestHangedMan endp
 
 main proc
+	;call Getnames
+	;call TestDisplayUI
 	;call TestIo
 	;call TestGameLogic
-	;call TestGame
-	call TestHangedMan
+	call TestGame
+	;call TestHangedMan
 	invoke ExitProcess,0
 main endp
 end main
