@@ -205,147 +205,7 @@ DrawHangman proc uses edx eax ebx ecx
 	mov al, 7Ch
 	call WriteChar
 
-; head 
-	xor ebx, ebx
-	mov ecx, failState
-	inc ebx				;We want to draw the head if failState >= 1
-	cmp ecx, ebx
-	jl fini				;If failState < 1 skip to the end
-
-	mov dh, starty		;Otherwise, draw the head
-	add dh, 2
-	mov dl, startx
-	add dl, 6
-	 
-	call Gotoxy
-	mov al, 4Fh 
-	call WriteChar 
-
-; body
-	inc ebx				;We want to draw the body if failState >= 2
-	cmp ecx, ebx
-	jl fini				;If failState < 2, jump to the end
 	
-	mov dh, starty		;Otherwise, draw the body
-	add dh, 3
-	mov dl, startx 
-	add dl, 6
-
-	call Gotoxy
-	mov al, 7Ch
-	call WriteChar
-
-; left first arm 
-	mov dh, starty 
-	add dh, 3
-	mov dl, startx
-	add dl, 5
-
-	call Gotoxy
-	mov al, 2Fh
-	call WriteChar
-
-; right first arm 
-	mov dh, starty
-	add dh, 3 
-	mov dl, startx 
-	add dl, 7
-
-	call Gotoxy
-	mov al, 5Ch
-	call WriteChar
-
-; left second arm 
-	mov dh, starty 
-	add dh, 4
-	mov dl, startx
-	add dl, 4
-
-	call Gotoxy
-	mov al, 2Fh
-	call WriteChar
-
-; right second arm 
-	mov dh, starty
-	add dh, 4 
-	mov dl, startx 
-	add dl, 8
-
-	call Gotoxy
-	mov al, 5Ch
-	call WriteChar
-
-; second body part
-	mov dh, starty
-	add dh, 4 
-	mov dl, startx 
-	add dl, 6
-	
-	call Gotoxy
-	mov al, 7Ch
-	call WriteChar
-
-	
-; first left leg part
-	mov dh, starty
-	add dh, 5
-	mov dl, startx
-	add dl, 5
-
-	call Gotoxy
-	mov al, 2Fh
-	call WriteChar
-
-; second left leg part
-	mov dh, starty 
-	add dh, 6
-	mov dl, startx
-	add dl, 4
-
-	call Gotoxy
-	mov al, 2Fh
-	call WriteChar
-
-; first right leg part
-	mov dh, starty
-	add dh, 5
-	mov dl, startx 
-	add dl, 7
-
-	call Gotoxy
-	mov al, 5Ch
-	call WriteChar
-
-; second right leg part
-	mov dh, starty 
-	add dh, 6
-	mov dl, startx
-	add dl, 8
-
-	call Gotoxy
-	mov al, 5Ch
-	call WriteChar
-
-; left foot 
-	mov dh, starty 
-	add dh, 6
-	mov dl, startx
-	add dl, 3
-
-	call Gotoxy
-	mov al, 5Fh
-	call WriteChar
-
-; right foot  
-	mov dh, starty
-	add dh, 6
-	mov dl, startx
-	add dl, 9
-
-	call Gotoxy
-	mov al, 5Fh
-	call WriteChar
-
 ; continue of the hanger
 	mov dh, starty
 	add dh, 9
@@ -420,13 +280,249 @@ DrawHangman proc uses edx eax ebx ecx
 	mov al, 5Fh
 	call WriteChar
 
+; creates void space for the "press any key to continue" 
+	mov dh, starty
+	add dh, 20
+	mov dl, startx
+	add dl, 20
+
+	call Gotoxy
+	mov al, 20h
+	call WriteChar
+	call crlf 
+
+; head 
+	xor ebx, ebx
+	mov ecx, failState
+	inc ebx				;We want to draw the head if failState >= 1
+	cmp ecx, ebx
+	jl fini				;If failState < 1 skip to the end
+
+	mov dh, starty		;Otherwise, draw the head
+	add dh, 2
+	mov dl, startx
+	add dl, 6
+	 
+	call Gotoxy
+	mov al, 4Fh 
+	call WriteChar 
+
+; creates void space for the "press any key to continue" 
+	mov dh, starty
+	add dh, 20
+	mov dl, startx
+	add dl, 20
+
+	call Gotoxy
+	mov al, 20h
+	call WriteChar
+	call crlf 
+
+; body
+	inc ebx				;We want to draw the body if failState >= 2
+	cmp ecx, ebx
+	jl fini				;If failState < 2, jump to the end
+	
+	mov dh, starty		;Otherwise, draw the body parts 
+	add dh, 3
+	mov dl, startx 
+	add dl, 6
+
+	call Gotoxy
+	mov al, 7Ch
+	call WriteChar
+
+; second body part
+	mov dh, starty
+	add dh, 4 
+	mov dl, startx 
+	add dl, 6
+	
+	call Gotoxy
+	mov al, 7Ch
+	call WriteChar
+
+; creates void space for the "press any key to continue" 
+	mov dh, starty
+	add dh, 20
+	mov dl, startx
+	add dl, 20
+
+	call Gotoxy
+	mov al, 20h
+	call WriteChar
+	call crlf 
+		
+; first left leg part
+	inc ebx				;We want to draw the body if failState >= 3
+	cmp ecx, ebx 		
+	jl fini				;If failState < 3, jump to the end
+	
+	mov dh, starty  	;Otherwise, draw the first and second right arm (as one)
+	add dh, 5
+	mov dl, startx
+	add dl, 5
+
+	call Gotoxy
+	mov al, 2Fh
+	call WriteChar
+
+; second left leg part
+	mov dh, starty 
+	add dh, 6
+	mov dl, startx
+	add dl, 4
+
+	call Gotoxy
+	mov al, 2Fh
+	call WriteChar
+
+; left foot 
+	mov dh, starty 
+	add dh, 6
+	mov dl, startx
+	add dl, 3
+
+	call Gotoxy
+	mov al, 5Fh
+	call WriteChar
+
+; creates void space for the "press any key to continue" 
+	mov dh, starty
+	add dh, 20
+	mov dl, startx
+	add dl, 20
+
+	call Gotoxy
+	mov al, 20h
+	call WriteChar
+	call crlf 
+
+; first right leg part
+	inc ebx				;We want to draw the body if failState >= 4
+	cmp ecx, ebx 		
+	jl fini				;If failState < 4, jump to the end
+
+	mov dh, starty		;Otherwise, draw the first and second right leg (as one)
+	add dh, 5
+	mov dl, startx 
+	add dl, 7
+
+	call Gotoxy
+	mov al, 5Ch
+	call WriteChar
+
+; second right leg part
+	mov dh, starty 
+	add dh, 6
+	mov dl, startx
+	add dl, 8
+
+	call Gotoxy
+	mov al, 5Ch
+	call WriteChar
 
 
+; right foot  
+	mov dh, starty
+	add dh, 6
+	mov dl, startx
+	add dl, 9
+
+	call Gotoxy
+	mov al, 5Fh
+	call WriteChar
+	
+; creates void space for the "press any key to continue" 
+	mov dh, starty
+	add dh, 20
+	mov dl, startx
+	add dl, 20
+
+	call Gotoxy
+	mov al, 20h
+	call WriteChar
+	call crlf 
+
+; left first arm 
+	inc ebx             ;We want to draw the body if failState >= 5
+	cmp ecx, ebx        
+	jl fini 			;If failState < 5, jump to the end
+	
+	mov dh, starty 		;Otherwise, draw the first and second left arm (as one)
+	add dh, 3
+	mov dl, startx
+	add dl, 5
+
+	call Gotoxy
+	mov al, 2Fh
+	call WriteChar
+
+	; left second arm 
+	mov dh, starty 
+	add dh, 4
+	mov dl, startx
+	add dl, 4
+
+	call Gotoxy
+	mov al, 2Fh
+	call WriteChar
+
+; creates void space for the "press any key to continue" 
+	mov dh, starty
+	add dh, 20
+	mov dl, startx
+	add dl, 20
+
+	call Gotoxy
+	mov al, 20h
+	call WriteChar
+	call crlf 
+
+; right first arm    	
+	inc ebx				;We want to draw the body if failState >= 6
+	cmp ecx, ebx 		
+	jl fini				;If failState < 6, jump to the end
+	
+	mov dh, starty     	;Otherwise, draw the first and second right arm (as one)
+	add dh, 3 
+	mov dl, startx 
+	add dl, 7
+
+	call Gotoxy
+	mov al, 5Ch
+	call WriteChar
+
+; right second arm 			
+	mov dh, starty
+	add dh, 4 
+	mov dl, startx 
+	add dl, 8
+
+	call Gotoxy
+	mov al, 5Ch
+	call WriteChar
+
+	call Gotoxy
+	mov al, 20h
+	call WriteChar
+	call crlf 
+
+; creates void space so that after the last thing that is printed goes to (20,20) and then displays "press any key to continue"
+	mov dh, starty
+	add dh, 20
+	mov dl, startx
+	add dl, 20
+
+	call Gotoxy
+	mov al, 20h
+	call WriteChar
 	call crlf 
 
 fini:
 	ret 
 DrawHangman endp
+
 
 
 ;CallAndResponseString uses eax, ecx, and edx

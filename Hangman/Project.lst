@@ -1,4 +1,4 @@
-Microsoft (R) Macro Assembler Version 14.10.25019.0	    11/28/17 13:35:49
+Microsoft (R) Macro Assembler Version 14.10.25019.0	    12/07/17 08:48:27
 Hangman	(hangman.asm				     Page 1 - 1
 
 
@@ -29,29 +29,60 @@ Microsoft (R) Macro Assembler Version 14.10.25019.0	    11/28/17 13:35:49
 			      C 
 
  00000000			.data
- 00000000 00000010		defaultMaxAnswerLength DWORD 16
- 00000004 50 6C 61 79 65	promptNamePlayer1 BYTE "Player 1, please enter your name: ",0
+
+				;Test data
+ 00000000 54 68 65 20 63	guessSugar BYTE "The current guess is: ",0
+	   75 72 72 65 6E
+	   74 20 67 75 65
+	   73 73 20 69 73
+	   3A 20 00
+ 00000017 54 68 65 20 70	playerNameSugar BYTE "The player's name is: ",0
+	   6C 61 79 65 72
+	   27 73 20 6E 61
+	   6D 65 20 69 73
+	   3A 20 00
+ 0000002E 54 68 65 20 74	targetWordSugar BYTE "The target word is: ",0
+	   61 72 67 65 74
+	   20 77 6F 72 64
+	   20 69 73 3A 20
+	   00
+ 00000043 54 68 65 20 77	winningScoreSugar BYTE "The winning score is: ",0
+	   69 6E 6E 69 6E
+	   67 20 73 63 6F
+	   72 65 20 69 73
+	   3A 20 00
+ 0000005A 54 68 65 20 6D	wordMaxLengthSugar BYTE "The max word length is: ",0
+	   61 78 20 77 6F
+	   72 64 20 6C 65
+	   6E 67 74 68 20
+	   69 73 3A 20 00
+
+				;Production data
+ 00000073 00000010		defaultMaxAnswerLength DWORD 16
+
+ 00000077 50 6C 61 79 65	promptNamePlayer1 BYTE "Player 1, please enter your name: ",0
 	   72 20 31 2C 20
 	   70 6C 65 61 73
 	   65 20 65 6E 74
 	   65 72 20 79 6F
 	   75 72 20 6E 61
 	   6D 65 3A 20 00
- 00000027 50 6C 61 79 65	promptNamePlayer2 BYTE "Player 2, please enter your name: ",0
+ 0000009A 50 6C 61 79 65	promptNamePlayer2 BYTE "Player 2, please enter your name: ",0
 	   72 20 32 2C 20
 	   70 6C 65 61 73
 	   65 20 65 6E 74
 	   65 72 20 79 6F
 	   75 72 20 6E 61
 	   6D 65 3A 20 00
- 0000004A  00000010 [		player1Name BYTE 16 DUP(0)
+ 000000BD  00000010 [		player1Name BYTE 16 DUP(0)
 	    00
 	   ]
- 0000005A  00000010 [		player2Name BYTE 16 DUP(0)
+ 000000CD  00000010 [		player2Name BYTE 16 DUP(0)
 	    00
 	   ]
- 0000006A 00000010		nameMaxLength DWORD 16
- 0000006E 49 6E 70 75 74	promptWordMaxLength BYTE "Input the maximum length of the words you wish to play with today: ",0
+ 000000DD 00000010		nameMaxLength DWORD 16
+
+ 000000E1 49 6E 70 75 74	promptWordMaxLength BYTE "Input the maximum length of the words you wish to play with today: ",0
 	   20 74 68 65 20
 	   6D 61 78 69 6D
 	   75 6D 20 6C 65
@@ -65,8 +96,9 @@ Microsoft (R) Macro Assembler Version 14.10.25019.0	    11/28/17 13:35:49
 	   77 69 74 68 20
 	   74 6F 64 61 79
 	   3A 20 00
- 000000B2 00000010		wordMaxLength DWORD 16
- 000000B6 49 6E 70 75 74	promptWinningScore BYTE "Input the score you would like to play to: ",0
+ 00000125 00000010		wordMaxLength DWORD 16
+
+ 00000129 49 6E 70 75 74	promptWinningScore BYTE "Input the score you would like to play to: ",0
 	   20 74 68 65 20
 	   73 63 6F 72 65
 	   20 79 6F 75 20
@@ -75,16 +107,23 @@ Microsoft (R) Macro Assembler Version 14.10.25019.0	    11/28/17 13:35:49
 	   20 74 6F 20 70
 	   6C 61 79 20 74
 	   6F 3A 20 00
- 000000E2 00000000		winningScore DWORD 0
- 000000E6 49 6E 70 75 74	promptTargetWord BYTE "Input the target word: ",0
+ 00000155 00000000		winningScore DWORD 0
+
+ 00000159 49 6E 70 75 74	promptTargetWord BYTE "Input the target word: ",0
 	   20 74 68 65 20
 	   74 61 72 67 65
 	   74 20 77 6F 72
 	   64 3A 20 00
- 000000FE  00000064 [		targetWord BYTE 100 DUP(0)
+ 00000171  00000064 [		targetWord BYTE 100 DUP(0)
 	    00
 	   ]
- 00000162 49 6E 70 75 74	promptGuess BYTE "Input the letter you would like to guess: ",0
+ 000001D5  00000064 [		displayWord BYTE 100 DUP(0)
+	    00
+	   ]
+ 00000239 00000000		targetWordLength DWORD 0
+
+
+ 0000023D 49 6E 70 75 74	promptGuess BYTE "Input the letter you would like to guess: ",0
 	   20 74 68 65 20
 	   6C 65 74 74 65
 	   72 20 79 6F 75
@@ -93,120 +132,947 @@ Microsoft (R) Macro Assembler Version 14.10.25019.0	    11/28/17 13:35:49
 	   65 20 74 6F 20
 	   67 75 65 73 73
 	   3A 20 00
- 0000018D 00			currentGuess BYTE 0
+ 00000268 00			currentGuess BYTE 0
+ 00000269 54 68 61 74 20	messageAlreadyGuessed BYTE "That letter was already guessed.",0
+	   6C 65 74 74 65
+	   72 20 77 61 73
+	   20 61 6C 72 65
+	   61 64 79 20 67
+	   75 65 73 73 65
+	   64 2E 00
+
+ 0000028A 00000000		failState DWORD 0
+ 0000028E 00000000		successState DWORD 0
+ 00000292 00000006		maxFailure DWORD 6
+ 00000296 57 69 74 68 20	messageFail BYTE "With a horrible snap, your virtual avatar's neck gives way to gravity's ceaseless urging.",0
+	   61 20 68 6F 72
+	   72 69 62 6C 65
+	   20 73 6E 61 70
+	   2C 20 79 6F 75
+	   72 20 76 69 72
+	   74 75 61 6C 20
+	   61 76 61 74 61
+	   72 27 73 20 6E
+	   65 63 6B 20 67
+	   69 76 65 73 20
+	   77 61 79 20 74
+	   6F 20 67 72 61
+	   76 69 74 79 27
+	   73 20 63 65 61
+	   73 65 6C 65 73
+	   73 20 75 72 67
+	   69 6E 67 2E 00
+ 000002F0 54 68 65 79 20	messageSuccess BYTE "They laughed at you, but you always knew those neck curls would prove useful. The rope gives way before your neck does and you live to play again.",0
+	   6C 61 75 67 68
+	   65 64 20 61 74
+	   20 79 6F 75 2C
+	   20 62 75 74 20
+	   79 6F 75 20 61
+	   6C 77 61 79 73
+	   20 6B 6E 65 77
+	   20 74 68 6F 73
+	   65 20 6E 65 63
+	   6B 20 63 75 72
+	   6C 73 20 77 6F
+	   75 6C 64 20 70
+	   72 6F 76 65 20
+	   75 73 65 66 75
+	   6C 2E 20 54 68
+	   65 20 72 6F 70
+	   65 20 67 69 76
+	   65 73 20 77 61
+	   79 20 62 65 66
+	   6F 72 65 20 79
+	   6F 75 72 20 6E
+	   65 63 6B 20 64
+	   6F 65 73 20 61
+	   6E 64 20 79 6F
+	   75 20 6C 69 76
+	   65 20 74 6F 20
+	   70 6C 61 79 20
+	   61 67 61 69 6E
+	   2E 00
+
+ 00000383 41 42 43 44 45	alphabet BYTE "ABCDEFGHIJKLMNOPQRSTUVWXYZ",0
+	   46 47 48 49 4A
+	   4B 4C 4D 4E 4F
+	   50 51 52 53 54
+	   55 56 57 58 59
+	   5A 00
+ 0000039E 41 42 43 44 45	alphaLeft BYTE "ABCDEFGHIJKLMNOPQRSTUVWXYZ",0
+	   46 47 48 49 4A
+	   4B 4C 4D 4E 4F
+	   50 51 52 53 54
+	   55 56 57 58 59
+	   5A 00
+
+				; ascii data, start x and y coordinates 
+ 000003B9 00			starty byte 0
+ 000003BA 00			startx byte 0
 
  00000000			.code
+ 00000000			DrawHangman proc uses edx eax ebx ecx
+				; gallows
+ 00000000  52		   *	    push   edx
+ 00000001  50		   *	    push   eax
+ 00000002  53		   *	    push   ebx
+ 00000003  51		   *	    push   ecx
+ 00000004  8A 35 000003B9 R		mov dh, starty
+ 0000000A  80 C6 01			add dh, 1
+ 0000000D  8A 15 000003BA R		mov dl, startx
+ 00000013  80 C2 06			add dl, 6
 
-				;CallAndResponse uses eax, ecx, and edx
+ 00000016  E8 00000000 E		call Gotoxy
+ 0000001B  B0 7C			mov al, 7Ch
+ 0000001D  E8 00000000 E		call WriteChar
+
+				; torque
+ 00000022  8A 35 000003B9 R		mov dh, starty
+ 00000028  8A 15 000003BA R		mov dl, startx 
+ 0000002E  80 C2 07			add dl, 7
+
+ 00000031  E8 00000000 E		call Gotoxy
+ 00000036  B0 5F			mov al, 5Fh
+ 00000038  E8 00000000 E		call WriteChar
+
+ 0000003D  8A 35 000003B9 R		mov dh, starty
+ 00000043  8A 15 000003BA R		mov dl, startx
+ 00000049  80 C2 08			add dl, 8
+
+ 0000004C  E8 00000000 E		call Gotoxy
+ 00000051  B0 5F			mov al, 5Fh
+ 00000053  E8 00000000 E		call WriteChar
+
+ 00000058  8A 35 000003B9 R		mov dh, starty
+ 0000005E  8A 15 000003BA R		mov dl, startx
+ 00000064  80 C2 09			add dl, 9
+
+ 00000067  E8 00000000 E		call Gotoxy
+ 0000006C  B0 5F			mov al, 5Fh
+ 0000006E  E8 00000000 E		call WriteChar
+
+ 00000073  8A 35 000003B9 R		mov dh, starty
+ 00000079  8A 15 000003BA R		mov dl, startx
+ 0000007F  80 C2 0A			add dl, 10
+
+ 00000082  E8 00000000 E		call Gotoxy
+ 00000087  B0 5F			mov al, 5Fh
+ 00000089  E8 00000000 E		call WriteChar
+
+ 0000008E  8A 35 000003B9 R		mov dh, starty
+ 00000094  8A 15 000003BA R		mov dl, startx
+ 0000009A  80 C2 0B			add dl, 11
+
+ 0000009D  E8 00000000 E		call Gotoxy
+ 000000A2  B0 5F			mov al, 5Fh
+ 000000A4  E8 00000000 E		call WriteChar
+					
+ 000000A9  8A 35 000003B9 R		mov dh, starty
+ 000000AF  8A 15 000003BA R		mov dl, startx
+ 000000B5  80 C2 0C			add dl, 12
+
+ 000000B8  E8 00000000 E		call Gotoxy
+ 000000BD  B0 5F			mov al, 5Fh
+ 000000BF  E8 00000000 E		call WriteChar
+				; 
+ 000000C4  8A 35 000003B9 R		mov dh, starty
+ 000000CA  80 C6 01			add dh, 1
+ 000000CD  8A 15 000003BA R		mov dl, startx
+ 000000D3  80 C2 0D			add dl, 13
+
+ 000000D6  E8 00000000 E		call Gotoxy
+ 000000DB  B0 7C			mov al, 7Ch
+ 000000DD  E8 00000000 E		call WriteChar
+
+ 000000E2  8A 35 000003B9 R		mov dh, starty
+ 000000E8  80 C6 02			add dh, 2
+ 000000EB  8A 15 000003BA R		mov dl, startx
+ 000000F1  80 C2 0D			add dl, 13
+
+ 000000F4  E8 00000000 E		call Gotoxy
+ 000000F9  B0 7C			mov al, 7Ch
+ 000000FB  E8 00000000 E		call WriteChar
+
+ 00000100  8A 35 000003B9 R		mov dh, starty
+ 00000106  80 C6 03			add dh, 3
+ 00000109  8A 15 000003BA R		mov dl, startx
+ 0000010F  80 C2 0D			add dl, 13
+
+ 00000112  E8 00000000 E		call Gotoxy
+ 00000117  B0 7C			mov al, 7Ch
+ 00000119  E8 00000000 E		call WriteChar
+
+ 0000011E  8A 35 000003B9 R		mov dh, starty
+ 00000124  80 C6 04			add dh, 4
+ 00000127  8A 15 000003BA R		mov dl, startx
+ 0000012D  80 C2 0D			add dl, 13
+
+ 00000130  E8 00000000 E		call Gotoxy
+ 00000135  B0 7C			mov al, 7Ch
+ 00000137  E8 00000000 E		call WriteChar
+
+ 0000013C  8A 35 000003B9 R		mov dh, starty
+ 00000142  80 C6 05			add dh, 5
+ 00000145  8A 15 000003BA R		mov dl, startx
+ 0000014B  80 C2 0D			add dl, 13
+
+ 0000014E  E8 00000000 E		call Gotoxy
+ 00000153  B0 7C			mov al, 7Ch
+ 00000155  E8 00000000 E		call WriteChar
+
+ 0000015A  8A 35 000003B9 R		mov dh, starty
+ 00000160  80 C6 06			add dh, 6
+ 00000163  8A 15 000003BA R		mov dl, startx
+ 00000169  80 C2 0D			add dl, 13
+
+ 0000016C  E8 00000000 E		call Gotoxy
+ 00000171  B0 7C			mov al, 7Ch
+ 00000173  E8 00000000 E		call WriteChar
+
+ 00000178  8A 35 000003B9 R		mov dh, starty
+ 0000017E  80 C6 07			add dh, 7
+ 00000181  8A 15 000003BA R		mov dl, startx
+ 00000187  80 C2 0D			add dl, 13
+
+ 0000018A  E8 00000000 E		call Gotoxy
+ 0000018F  B0 7C			mov al, 7Ch
+ 00000191  E8 00000000 E		call WriteChar
+
+ 00000196  8A 35 000003B9 R		mov dh, starty
+ 0000019C  80 C6 08			add dh, 8
+ 0000019F  8A 15 000003BA R		mov dl, startx
+ 000001A5  80 C2 0D			add dl, 13
+
+ 000001A8  E8 00000000 E		call Gotoxy
+ 000001AD  B0 7C			mov al, 7Ch
+ 000001AF  E8 00000000 E		call WriteChar
+
+ 000001B4  8A 35 000003B9 R		mov dh, starty
+ 000001BA  80 C6 09			add dh, 9
+ 000001BD  8A 15 000003BA R		mov dl, startx
+ 000001C3  80 C2 0D			add dl, 13
+
+ 000001C6  E8 00000000 E		call Gotoxy
+ 000001CB  B0 7C			mov al, 7Ch
+ 000001CD  E8 00000000 E		call WriteChar
+
+ 000001D2  8A 35 000003B9 R		mov dh, starty
+ 000001D8  80 C6 08			add dh, 8
+ 000001DB  8A 15 000003BA R		mov dl, startx
+ 000001E1  80 C2 0D			add dl, 13
+
+ 000001E4  E8 00000000 E		call Gotoxy
+ 000001E9  B0 7C			mov al, 7Ch
+ 000001EB  E8 00000000 E		call WriteChar
+
+					
+				; continue of the hanger
+ 000001F0  8A 35 000003B9 R		mov dh, starty
+ 000001F6  80 C6 09			add dh, 9
+ 000001F9  8A 15 000003BA R		mov dl, startx
+ 000001FF  80 C2 09			add dl, 9
+
+ 00000202  E8 00000000 E		call Gotoxy
+ 00000207  B0 5F			mov al, 5Fh
+ 00000209  E8 00000000 E		call WriteChar
+
+ 0000020E  8A 35 000003B9 R		mov dh, starty
+ 00000214  80 C6 09			add dh, 9
+ 00000217  8A 15 000003BA R		mov dl, startx
+ 0000021D  80 C2 0A			add dl, 10
+
+ 00000220  E8 00000000 E		call Gotoxy
+ 00000225  B0 5F			mov al, 5Fh
+ 00000227  E8 00000000 E		call WriteChar
+
+ 0000022C  8A 35 000003B9 R		mov dh, starty
+ 00000232  80 C6 09			add dh, 9
+ 00000235  8A 15 000003BA R		mov dl, startx
+ 0000023B  80 C2 0B			add dl, 11
+
+ 0000023E  E8 00000000 E		call Gotoxy
+ 00000243  B0 5F			mov al, 5Fh
+ 00000245  E8 00000000 E		call WriteChar
+
+ 0000024A  8A 35 000003B9 R		mov dh, starty
+ 00000250  80 C6 09			add dh, 9
+ 00000253  8A 15 000003BA R		mov dl, startx
+ 00000259  80 C2 0C			add dl, 12
+
+ 0000025C  E8 00000000 E		call Gotoxy
+ 00000261  B0 5F			mov al, 5Fh
+ 00000263  E8 00000000 E		call WriteChar
+
+ 00000268  8A 35 000003B9 R		mov dh, starty
+ 0000026E  80 C6 09			add dh, 9
+ 00000271  8A 15 000003BA R		mov dl, startx
+ 00000277  80 C2 0E			add dl, 14
+
+ 0000027A  E8 00000000 E		call Gotoxy
+ 0000027F  B0 5F			mov al, 5Fh
+ 00000281  E8 00000000 E		call WriteChar
+
+					
+ 00000286  8A 35 000003B9 R		mov dh, starty
+ 0000028C  80 C6 09			add dh, 9
+ 0000028F  8A 15 000003BA R		mov dl, startx
+ 00000295  80 C2 0F			add dl, 15
+
+ 00000298  E8 00000000 E		call Gotoxy
+ 0000029D  B0 5F			mov al, 5Fh
+ 0000029F  E8 00000000 E		call WriteChar
+
+ 000002A4  8A 35 000003B9 R		mov dh, starty
+ 000002AA  80 C6 09			add dh, 9
+ 000002AD  8A 15 000003BA R		mov dl, startx
+ 000002B3  80 C2 10			add dl, 16
+
+ 000002B6  E8 00000000 E		call Gotoxy
+ 000002BB  B0 5F			mov al, 5Fh
+ 000002BD  E8 00000000 E		call WriteChar
+
+ 000002C2  8A 35 000003B9 R		mov dh, starty
+ 000002C8  80 C6 09			add dh, 9
+ 000002CB  8A 15 000003BA R		mov dl, startx
+ 000002D1  80 C2 11			add dl, 17
+
+ 000002D4  E8 00000000 E		call Gotoxy
+ 000002D9  B0 5F			mov al, 5Fh
+ 000002DB  E8 00000000 E		call WriteChar
+
+				; creates void space for the "press any key to continue" 
+ 000002E0  8A 35 000003B9 R		mov dh, starty
+ 000002E6  80 C6 14			add dh, 20
+ 000002E9  8A 15 000003BA R		mov dl, startx
+ 000002EF  80 C2 14			add dl, 20
+
+ 000002F2  E8 00000000 E		call Gotoxy
+ 000002F7  B0 20			mov al, 20h
+ 000002F9  E8 00000000 E		call WriteChar
+ 000002FE  E8 00000000 E		call crlf 
+
+				; head 
+ 00000303  33 DB			xor ebx, ebx
+ 00000305  8B 0D 0000028A R		mov ecx, failState
+ 0000030B  43				inc ebx				;We want to draw the head if failState >= 1
+ 0000030C  3B CB			cmp ecx, ebx
+ 0000030E  0F 8C 00000292		jl fini				;If failState < 1 skip to the end
+
+ 00000314  8A 35 000003B9 R		mov dh, starty		;Otherwise, draw the head
+ 0000031A  80 C6 02			add dh, 2
+ 0000031D  8A 15 000003BA R		mov dl, startx
+ 00000323  80 C2 06			add dl, 6
+					 
+ 00000326  E8 00000000 E		call Gotoxy
+ 0000032B  B0 4F			mov al, 4Fh 
+ 0000032D  E8 00000000 E		call WriteChar 
+
+				; creates void space for the "press any key to continue" 
+ 00000332  8A 35 000003B9 R		mov dh, starty
+ 00000338  80 C6 14			add dh, 20
+ 0000033B  8A 15 000003BA R		mov dl, startx
+ 00000341  80 C2 14			add dl, 20
+
+ 00000344  E8 00000000 E		call Gotoxy
+ 00000349  B0 20			mov al, 20h
+ 0000034B  E8 00000000 E		call WriteChar
+ 00000350  E8 00000000 E		call crlf 
+
+				; body
+ 00000355  43				inc ebx				;We want to draw the body if failState >= 2
+ 00000356  3B CB			cmp ecx, ebx
+ 00000358  0F 8C 00000248		jl fini				;If failState < 2, jump to the end
+					
+ 0000035E  8A 35 000003B9 R		mov dh, starty		;Otherwise, draw the body parts 
+ 00000364  80 C6 03			add dh, 3
+ 00000367  8A 15 000003BA R		mov dl, startx 
+ 0000036D  80 C2 06			add dl, 6
+
+ 00000370  E8 00000000 E		call Gotoxy
+ 00000375  B0 7C			mov al, 7Ch
+ 00000377  E8 00000000 E		call WriteChar
+
+				; second body part
+ 0000037C  8A 35 000003B9 R		mov dh, starty
+ 00000382  80 C6 04			add dh, 4 
+ 00000385  8A 15 000003BA R		mov dl, startx 
+ 0000038B  80 C2 06			add dl, 6
+					
+ 0000038E  E8 00000000 E		call Gotoxy
+ 00000393  B0 7C			mov al, 7Ch
+ 00000395  E8 00000000 E		call WriteChar
+
+				; creates void space for the "press any key to continue" 
+ 0000039A  8A 35 000003B9 R		mov dh, starty
+ 000003A0  80 C6 14			add dh, 20
+ 000003A3  8A 15 000003BA R		mov dl, startx
+ 000003A9  80 C2 14			add dl, 20
+
+ 000003AC  E8 00000000 E		call Gotoxy
+ 000003B1  B0 20			mov al, 20h
+ 000003B3  E8 00000000 E		call WriteChar
+ 000003B8  E8 00000000 E		call crlf 
+						
+				; first left leg part
+ 000003BD  43				inc ebx				;We want to draw the body if failState >= 3
+ 000003BE  3B CB			cmp ecx, ebx 		
+ 000003C0  0F 8C 000001E0		jl fini				;If failState < 3, jump to the end
+					
+ 000003C6  8A 35 000003B9 R		mov dh, starty  	;Otherwise, draw the first and second right arm (as one)
+ 000003CC  80 C6 05			add dh, 5
+ 000003CF  8A 15 000003BA R		mov dl, startx
+ 000003D5  80 C2 05			add dl, 5
+
+ 000003D8  E8 00000000 E		call Gotoxy
+ 000003DD  B0 2F			mov al, 2Fh
+ 000003DF  E8 00000000 E		call WriteChar
+
+				; second left leg part
+ 000003E4  8A 35 000003B9 R		mov dh, starty 
+ 000003EA  80 C6 06			add dh, 6
+ 000003ED  8A 15 000003BA R		mov dl, startx
+ 000003F3  80 C2 04			add dl, 4
+
+ 000003F6  E8 00000000 E		call Gotoxy
+ 000003FB  B0 2F			mov al, 2Fh
+ 000003FD  E8 00000000 E		call WriteChar
+
+				; left foot 
+ 00000402  8A 35 000003B9 R		mov dh, starty 
+ 00000408  80 C6 06			add dh, 6
+ 0000040B  8A 15 000003BA R		mov dl, startx
+ 00000411  80 C2 03			add dl, 3
+
+ 00000414  E8 00000000 E		call Gotoxy
+ 00000419  B0 5F			mov al, 5Fh
+ 0000041B  E8 00000000 E		call WriteChar
+
+				; creates void space for the "press any key to continue" 
+ 00000420  8A 35 000003B9 R		mov dh, starty
+ 00000426  80 C6 14			add dh, 20
+ 00000429  8A 15 000003BA R		mov dl, startx
+ 0000042F  80 C2 14			add dl, 20
+
+ 00000432  E8 00000000 E		call Gotoxy
+ 00000437  B0 20			mov al, 20h
+ 00000439  E8 00000000 E		call WriteChar
+ 0000043E  E8 00000000 E		call crlf 
+
+				; first right leg part
+ 00000443  43				inc ebx				;We want to draw the body if failState >= 4
+ 00000444  3B CB			cmp ecx, ebx 		
+ 00000446  0F 8C 0000015A		jl fini				;If failState < 4, jump to the end
+
+ 0000044C  8A 35 000003B9 R		mov dh, starty		;Otherwise, draw the first and second right leg (as one)
+ 00000452  80 C6 05			add dh, 5
+ 00000455  8A 15 000003BA R		mov dl, startx 
+ 0000045B  80 C2 07			add dl, 7
+
+ 0000045E  E8 00000000 E		call Gotoxy
+ 00000463  B0 5C			mov al, 5Ch
+ 00000465  E8 00000000 E		call WriteChar
+
+				; second right leg part
+ 0000046A  8A 35 000003B9 R		mov dh, starty 
+ 00000470  80 C6 06			add dh, 6
+ 00000473  8A 15 000003BA R		mov dl, startx
+ 00000479  80 C2 08			add dl, 8
+
+ 0000047C  E8 00000000 E		call Gotoxy
+ 00000481  B0 5C			mov al, 5Ch
+ 00000483  E8 00000000 E		call WriteChar
+
+
+				; right foot  
+ 00000488  8A 35 000003B9 R		mov dh, starty
+ 0000048E  80 C6 06			add dh, 6
+ 00000491  8A 15 000003BA R		mov dl, startx
+ 00000497  80 C2 09			add dl, 9
+
+ 0000049A  E8 00000000 E		call Gotoxy
+ 0000049F  B0 5F			mov al, 5Fh
+ 000004A1  E8 00000000 E		call WriteChar
+					
+				; creates void space for the "press any key to continue" 
+ 000004A6  8A 35 000003B9 R		mov dh, starty
+ 000004AC  80 C6 14			add dh, 20
+ 000004AF  8A 15 000003BA R		mov dl, startx
+ 000004B5  80 C2 14			add dl, 20
+
+ 000004B8  E8 00000000 E		call Gotoxy
+ 000004BD  B0 20			mov al, 20h
+ 000004BF  E8 00000000 E		call WriteChar
+ 000004C4  E8 00000000 E		call crlf 
+
+				; left first arm 
+ 000004C9  43				inc ebx             ;We want to draw the body if failState >= 5
+ 000004CA  3B CB			cmp ecx, ebx        
+ 000004CC  0F 8C 000000D4		jl fini 			;If failState < 5, jump to the end
+					
+ 000004D2  8A 35 000003B9 R		mov dh, starty 		;Otherwise, draw the first and second left arm (as one)
+ 000004D8  80 C6 03			add dh, 3
+ 000004DB  8A 15 000003BA R		mov dl, startx
+ 000004E1  80 C2 05			add dl, 5
+
+ 000004E4  E8 00000000 E		call Gotoxy
+ 000004E9  B0 2F			mov al, 2Fh
+ 000004EB  E8 00000000 E		call WriteChar
+
+					; left second arm 
+ 000004F0  8A 35 000003B9 R		mov dh, starty 
+ 000004F6  80 C6 04			add dh, 4
+ 000004F9  8A 15 000003BA R		mov dl, startx
+ 000004FF  80 C2 04			add dl, 4
+
+ 00000502  E8 00000000 E		call Gotoxy
+ 00000507  B0 2F			mov al, 2Fh
+ 00000509  E8 00000000 E		call WriteChar
+
+				; creates void space for the "press any key to continue" 
+ 0000050E  8A 35 000003B9 R		mov dh, starty
+ 00000514  80 C6 14			add dh, 20
+ 00000517  8A 15 000003BA R		mov dl, startx
+ 0000051D  80 C2 14			add dl, 20
+
+ 00000520  E8 00000000 E		call Gotoxy
+ 00000525  B0 20			mov al, 20h
+ 00000527  E8 00000000 E		call WriteChar
+ 0000052C  E8 00000000 E		call crlf 
+
+				; right first arm    	
+ 00000531  43				inc ebx				;We want to draw the body if failState >= 6
+ 00000532  3B CB			cmp ecx, ebx 		
+ 00000534  7C 70			jl fini				;If failState < 6, jump to the end
+					
+ 00000536  8A 35 000003B9 R		mov dh, starty     	;Otherwise, draw the first and second right arm (as one)
+ 0000053C  80 C6 03			add dh, 3 
+ 0000053F  8A 15 000003BA R		mov dl, startx 
+ 00000545  80 C2 07			add dl, 7
+
+ 00000548  E8 00000000 E		call Gotoxy
+ 0000054D  B0 5C			mov al, 5Ch
+ 0000054F  E8 00000000 E		call WriteChar
+
+				; right second arm 			
+ 00000554  8A 35 000003B9 R		mov dh, starty
+ 0000055A  80 C6 04			add dh, 4 
+ 0000055D  8A 15 000003BA R		mov dl, startx 
+ 00000563  80 C2 08			add dl, 8
+
+ 00000566  E8 00000000 E		call Gotoxy
+ 0000056B  B0 5C			mov al, 5Ch
+ 0000056D  E8 00000000 E		call WriteChar
+
+ 00000572  E8 00000000 E		call Gotoxy
+ 00000577  B0 20			mov al, 20h
+ 00000579  E8 00000000 E		call WriteChar
+ 0000057E  E8 00000000 E		call crlf 
+
+				; creates void space so that after the last thing that is printed goes to (20,20) and then displays "press any key to continue"
+ 00000583  8A 35 000003B9 R		mov dh, starty
+ 00000589  80 C6 14			add dh, 20
+ 0000058C  8A 15 000003BA R		mov dl, startx
+ 00000592  80 C2 14			add dl, 20
+
+ 00000595  E8 00000000 E		call Gotoxy
+ 0000059A  B0 20			mov al, 20h
+ 0000059C  E8 00000000 E		call WriteChar
+ 000005A1  E8 00000000 E		call crlf 
+
+ 000005A6			fini:
+					ret 
+ 000005A6  59		   *	    pop    ecx
+ 000005A7  5B		   *	    pop    ebx
+ 000005A8  58		   *	    pop    eax
+ 000005A9  5A		   *	    pop    edx
+ 000005AA  C3		   *	    ret    00000h
+ 000005AB			DrawHangman endp
+
+
+
+				;CallAndResponseString uses eax, ecx, and edx
 				;It requires three parameters pushed to the stack:
 				;	address of the prompt you wish to display
 				;	address where you wish to store the answerAddress
 				;	max length of the answer
 				;It then displays the prompt and stores the answer
- 00000000			CallAndResponse proc USES eax ecx edx,
+ 000005AB			CallAndResponseString proc USES eax ecx edx,
 					promptAddress:DWORD,
 					answerAddress:DWORD,
 					answerMaxSize:DWORD
 
- 00000000  55		   *	    push   ebp
- 00000001  8B EC	   *	    mov    ebp, esp
- 00000003  50		   *	    push   eax
- 00000004  51		   *	    push   ecx
- 00000005  52		   *	    push   edx
- 00000006  8B 55 08			mov edx, promptAddress
- 00000009  E8 00000000 E		call WriteString
- 0000000E  8B 55 0C			mov edx, answerAddress
- 00000011  8B 4D 10			mov ecx, answerMaxSize
- 00000014  E8 00000000 E		call ReadString
+ 000005AB  55		   *	    push   ebp
+ 000005AC  8B EC	   *	    mov    ebp, esp
+ 000005AE  50		   *	    push   eax
+ 000005AF  51		   *	    push   ecx
+ 000005B0  52		   *	    push   edx
+ 000005B1  8B 55 08			mov edx, promptAddress
+ 000005B4  E8 00000000 E		call WriteString
+ 000005B9  8B 55 0C			mov edx, answerAddress
+ 000005BC  8B 4D 10			mov ecx, answerMaxSize
+ 000005BF  E8 00000000 E		call ReadString
 					ret
- 00000019  5A		   *	    pop    edx
- 0000001A  59		   *	    pop    ecx
- 0000001B  58		   *	    pop    eax
- 0000001C  C9		   *	    leave  
- 0000001D  C2 000C	   *	    ret    0000Ch
- 00000020			CallAndResponse endp
+ 000005C4  5A		   *	    pop    edx
+ 000005C5  59		   *	    pop    ecx
+ 000005C6  58		   *	    pop    eax
+ 000005C7  C9		   *	    leave  
+ 000005C8  C2 000C	   *	    ret    0000Ch
+ 000005CB			CallAndResponseString endp
+
+				;CallAndResponseInt uses eax, ecx, and edx
+				;It requires three parameters pushed to the stack:
+				;	address of the prompt you wish to display
+				;	address where you wish to store the answerAddress
+				;	max length of the answer
+				;It then displays the prompt and stores the answer
+ 000005CB			CallAndResponseInt proc USES eax ecx edx,
+					promptAddress:DWORD,
+					answerAddress:DWORD
+
+ 000005CB  55		   *	    push   ebp
+ 000005CC  8B EC	   *	    mov    ebp, esp
+ 000005CE  50		   *	    push   eax
+ 000005CF  51		   *	    push   ecx
+ 000005D0  52		   *	    push   edx
+ 000005D1  8B 55 08			mov edx, promptAddress
+ 000005D4  E8 00000000 E		call WriteString
+ 000005D9  E8 00000000 E		call ReadInt
+ 000005DE  8B 4D 0C			mov ecx, answerAddress
+ 000005E1  89 01			mov [ecx], eax
+					ret
+ 000005E3  5A		   *	    pop    edx
+ 000005E4  59		   *	    pop    ecx
+ 000005E5  58		   *	    pop    eax
+ 000005E6  C9		   *	    leave  
+ 000005E7  C2 0008	   *	    ret    00008h
+ 000005EA			CallAndResponseInt endp
+
 
 				;Uses CallAndResponse to store the name for each player
- 00000020			GetNames proc
- 00000020  FF 35 0000006A R		push nameMaxLength
- 00000026  68 0000004A R		push OFFSET player1Name
- 0000002B  68 00000004 R		push OFFSET promptNamePlayer1
- 00000030  E8 FFFFFFCB			Call CallAndResponse
+ 000005EA			GetNames proc
+ 000005EA  FF 35 000000DD R		push nameMaxLength
+ 000005F0  68 000000BD R		push OFFSET player1Name
+ 000005F5  68 00000077 R		push OFFSET promptNamePlayer1
+ 000005FA  E8 FFFFFFAC			Call CallAndResponseString
 					
- 00000035  FF 35 0000006A R		push nameMaxLength
- 0000003B  68 0000005A R		push OFFSET player2Name
- 00000040  68 00000027 R		push OFFSET promptNamePlayer2
- 00000045  E8 FFFFFFB6			Call CallAndResponse
- 0000004A  C3				ret
- 0000004B			GetNames endp
+ 000005FF  FF 35 000000DD R		push nameMaxLength
+ 00000605  68 000000CD R		push OFFSET player2Name
+ 0000060A  68 0000009A R		push OFFSET promptNamePlayer2
+ 0000060F  E8 FFFFFF97			Call CallAndResponseString
+ 00000614  C3				ret
+ 00000615			GetNames endp
 
- 0000004B			GetNames1 proc USES eax ecx edx
- 0000004B  50		   *	    push   eax
- 0000004C  51		   *	    push   ecx
- 0000004D  52		   *	    push   edx
- 0000004E  BA 00000004 R		mov edx, offset promptNamePlayer1
- 00000053  E8 00000000 E		call WriteString
- 00000058  BA 0000004A R		mov edx, OFFSET player1Name
- 0000005D  B9 00000010			mov ecx, 16
- 00000062  E8 00000000 E		call ReadString
- 00000067  BA 00000027 R		mov edx, offset promptNamePlayer2
- 0000006C  E8 00000000 E		call WriteString
- 00000071  B9 00000010			mov ecx, 16
- 00000076  BA 0000005A R		mov edx, offset player2Name
- 0000007B  E8 00000000 E		call ReadString
+				;Uses CallAndResponse to store the maximum word length for this session
+ 00000615			GetWordMaxLength proc
+ 00000615  68 00000125 R		push OFFSET wordMaxLength
+ 0000061A  68 000000E1 R		push OFFSET promptWordMaxLength
+ 0000061F  E8 FFFFFFA7			call CallAndResponseInt
+ 00000624  C3				ret
+ 00000625			GetWordMaxLength endp
+
+				;Uses CallAndResponse to store the winning score for this session
+ 00000625			GetWinningScore proc
+ 00000625  68 00000155 R		push OFFSET winningScore
+ 0000062A  68 00000129 R		push OFFSET promptWinningScore
+ 0000062F  E8 FFFFFF97			call CallAndResponseInt
+ 00000634  C3				ret
+ 00000635			GetWinningScore endp
+
+				;Stores the target word and its length for this round
+ 00000635			GetTargetWord proc uses eax ecx edx esi
+ 00000635  50		   *	    push   eax
+ 00000636  51		   *	    push   ecx
+ 00000637  52		   *	    push   edx
+ 00000638  56		   *	    push   esi
+ 00000639  BA 00000159 R		mov edx, OFFSET promptTargetWord
+ 0000063E  E8 00000000 E		call WriteString
+ 00000643  BA 00000171 R		mov edx, OFFSET targetWord
+ 00000648  8B 0D 00000125 R		mov ecx, wordMaxLength
+ 0000064E  E8 00000000 E		call ReadString
+ 00000653  A3 00000239 R		mov targetWordLength, eax	;Store the length of the word
+ 00000658  8B C8			mov ecx, eax				;copy the word length to our loop counter
+ 0000065A  33 F6			xor esi, esi				;zero our index
+ 0000065C  B0 5F			mov al, 5fh					;load al with the ASCII code for underscore
+ 0000065E			CreateDisplayWord:
+ 0000065E  88 86 000001D5 R		mov displayWord[esi], al	;...and write it to displayWord
+ 00000664  80 A6 00000171 R		and targetWord[esi], 0DFh	;And while we're at it, let's make targetWord uppercase for ease of comparison
+	   DF
+ 0000066B  46				inc esi						;increment index
+ 0000066C  E2 F0		loop CreateDisplayWord
 					ret
- 00000080  5A		   *	    pop    edx
- 00000081  59		   *	    pop    ecx
- 00000082  58		   *	    pop    eax
- 00000083  C3		   *	    ret    00000h
- 00000084			GetNames1 endp
+ 0000066E  5E		   *	    pop    esi
+ 0000066F  5A		   *	    pop    edx
+ 00000670  59		   *	    pop    ecx
+ 00000671  58		   *	    pop    eax
+ 00000672  C3		   *	    ret    00000h
+ 00000673			GetTargetWord endp
 
- 00000084			GetMaxWordLength proc
- 00000084  68 00000000 R		push OFFSET defaultMaxAnswerLength
- 00000089  68 000000B2 R		push OFFSET wordMaxLength
- 0000008E  68 0000006E R		push OFFSET promptWordMaxLength
- 00000093  E8 FFFFFF68			call CallAndResponse
- 00000098			GetMaxWordLength endp
-
- 00000098			GetWinningScore proc
- 00000098  68 00000000 R		push OFFSET defaultMaxAnswerLength
- 0000009D  68 000000E2 R		push OFFSET winningScore
- 000000A2  68 000000B6 R		push OFFSET promptWinningScore
- 000000A7  E8 FFFFFF54			call CallAndResponse
- 000000AC			GetWinningScore endp
-
- 000000AC			GetTargetWord proc
- 000000AC  68 000000B2 R		push OFFSET wordMaxLength
- 000000B1  68 000000FE R		push OFFSET targetWord
- 000000B6  68 000000E6 R		push OFFSET promptTargetWord
- 000000BB  E8 FFFFFF40			call CallAndResponse
- 000000C0			GetTargetWord endp
-
- 000000C0			GetGuess proc
- 000000C0  BA 00000162 R		mov edx, OFFSET promptGuess
- 000000C5  E8 00000000 E		call WriteString
- 000000CA  E8 00000000 E		call ReadChar
- 000000CF			GetGuess endp
+				;Gets a letter from the guesser and store it in currentGuess
+ 00000673			GetGuess proc
+					;First we need to get the guess from the user
+ 00000673  BA 0000023D R		mov edx, OFFSET promptGuess
+ 00000678  E8 00000000 E		call WriteString
+ 0000067D  E8 00000000 E		call ReadChar			;store the guess in al
+ 00000682  24 DF			and al, 0DFh			;render the letter uppercase
+ 00000684  A2 00000268 R		mov currentGuess, al	;store the uppercase letter in currentGuess
+ 00000689  C3				ret
+ 0000068A			GetGuess endp
 
 
- 000000CF			CheckGuess proc
+ 0000068A			CheckGuess proc USES eax ebx ecx edx edi esi
+ 0000068A  50		   *	    push   eax
+ 0000068B  53		   *	    push   ebx
+ 0000068C  51		   *	    push   ecx
+ 0000068D  52		   *	    push   edx
+ 0000068E  57		   *	    push   edi
+ 0000068F  56		   *	    push   esi
+ 00000690  33 C0			xor eax, eax				;clear eax
+ 00000692  33 D2			xor edx, edx				;clear edx
+ 00000694  33 FF			xor edi, edi				;clear edi, will be our running total of characters in the target word matched by guess
+ 00000696  A0 00000268 R		mov al, currentGuess
+					;First we need to see if the letter has already been guessed
+ 0000069B  8A D8			mov bl, al					;Use bl to compare the guess to the index character in alphaLeft
+ 0000069D  2C 41			sub al, 41h					;Subtract 41h from the guess's ASCII code to convert the code to an index on alphaLeft		
+ 0000069F  3A 98 0000039E R		cmp	bl, alphaLeft[eax]
+ 000006A5  74 0C			je Unguessed				;If they're the same (ZF set), the letter has not been previously guessed.
+ 000006A7  BA 00000269 R		mov edx, OFFSET messageAlreadyGuessed	;otherwise the letter has been previously guessed
+ 000006AC  E8 00000000 E		call WriteString			;So tell them
+ 000006B1  EB 4A			jmp finish					;and exit -- If we combine GetGuess with CheckGuess, we can instead jump back and ask for another guess
+ 000006B3			Unguessed:	
+ 000006B3  C6 80 0000039E R		mov alphaLeft[eax], 0		;Zero the guesses letter in alphaLeft
+	   00
+ 000006BA  33 DB			xor ebx, ebx				;clear ebx
+ 000006BC  8B 0D 00000239 R		mov ecx, targetWordLength	;load our loop counter
+ 000006C2  33 F6			xor esi, esi				;zero our index
+ 000006C4  04 41			add al, 41h					;restore our index to its ASCII char equivalent
+					;Next we need to see if the target word contains any instances of the guess
+ 000006C6			WalkTargetWord:
+ 000006C6  38 86 00000171 R		cmp targetWord[esi], al		;compare the letter in targetWord with the guess in al
+ 000006CC  0F 94 C2			sete dl						;If there's a match, set dl to 1, otherwise dl is 0
+ 000006CF  8A 9E 000001D5 R		mov bl, displayWord[esi]	;load bl with the character in displayWord
+ 000006D5  0F 44 D8			cmove ebx, eax				;if the guess is correct, replace the default value in bl
+ 000006D8  88 9E 000001D5 R		mov displayWord[esi], bl	;load either the correct guess or the default character back into displayWord
+ 000006DE  33 DB			xor ebx, ebx				;clear ebx
+ 000006E0  66| 03 FA			add di, dx					;Add the success bit to our running total
+ 000006E3  33 D2			xor edx, edx				;clear our success marker
+ 000006E5  46				inc esi
+ 000006E6  E2 DE		loop WalkTargetWord
+ 000006E8  83 FF 01			cmp edi, 1					;Check to see if we found any matches
+ 000006EB  0F 92 C3			setb bl						;If no matches, set bl
+ 000006EE  0F 9C C3			setl bl
+ 000006F1  01 1D 0000028A R		add failState, ebx			;Add 1 to failState if we found no matches
+ 000006F7  01 3D 0000028E R		add successState, edi		;Add any successes to the success state
+					;call WriteChar
+ 000006FD			finish:
+					ret
+ 000006FD  5E		   *	    pop    esi
+ 000006FE  5F		   *	    pop    edi
+ 000006FF  5A		   *	    pop    edx
+ 00000700  59		   *	    pop    ecx
+ 00000701  5B		   *	    pop    ebx
+ 00000702  58		   *	    pop    eax
+ 00000703  C3		   *	    ret    00000h
+ 00000704			CheckGuess endp
 
- 000000CF			CheckGuess endp
+ 00000704			OutputGuesses proc USES eax ebx ecx esi
+ 00000704  50		   *	    push   eax
+ 00000705  53		   *	    push   ebx
+ 00000706  51		   *	    push   ecx
+ 00000707  56		   *	    push   esi
+ 00000708  B9 0000001A			mov ecx, 26				;Need to check 26 letters
+ 0000070D  33 F6			xor esi, esi			;Zero our index
+ 0000070F  33 DB			xor ebx, ebx			;We will need a zero register
+ 00000711			WalkAlphaleft:
+ 00000711  8A 86 00000383 R		mov al, alphabet[esi]	
+ 00000717  8A A6 0000039E R		mov ah, alphaLeft[esi]
+ 0000071D  3A E0			cmp ah, al				;Compare the letter at the index in both 'bet and 'left
+ 0000071F  0F 44 C3			cmove eax, ebx 			;If they're the same, the letter has not been guessed so we want to output... nothing
+ 00000722  E8 00000000 E		call WriteChar			;Output the either the letter or nothing
+ 00000727  B0 20			mov al, 20h				;Output a space
+ 00000729  E8 00000000 E		call WriteChar
+ 0000072E  46				inc esi					;increment loop counter
+ 0000072F  E2 E0		loop WalkAlphaleft
+					ret
+ 00000731  5E		   *	    pop    esi
+ 00000732  59		   *	    pop    ecx
+ 00000733  5B		   *	    pop    ebx
+ 00000734  58		   *	    pop    eax
+ 00000735  C3		   *	    ret    00000h
+ 00000736			OutputGuesses endp
 
- 000000CF			main proc
- 000000CF  E8 FFFFFF4C			call GetNames
- 000000D4  BA 0000004A R		mov edx, OFFSET player1Name
- 000000D9  E8 00000000 E		call WriteString
- 000000DE  E8 00000000 E		call Crlf
- 000000E3  BA 0000005A R		mov edx, OFFSET player2Name
- 000000E8  E8 00000000 E		call WriteString
- 000000ED  E8 00000000 E		call Crlf
+ 00000736			OutputDisplayWord proc uses eax ecx esi
+ 00000736  50		   *	    push   eax
+ 00000737  51		   *	    push   ecx
+ 00000738  56		   *	    push   esi
+ 00000739  8B 0D 00000239 R		mov ecx, targetWordLength	;load our loop counter
+ 0000073F  33 F6			xor esi, esi				;clear our index
+ 00000741			WalkDisplayWord:				;walk the display word and output each character
+ 00000741  8A 86 000001D5 R		mov al, displayWord[esi]
+ 00000747  E8 00000000 E		call WriteChar
+ 0000074C  46				inc esi
+ 0000074D  E2 F2		loop WalkDisplayWord
+					ret
+ 0000074F  5E		   *	    pop    esi
+ 00000750  59		   *	    pop    ecx
+ 00000751  58		   *	    pop    eax
+ 00000752  C3		   *	    ret    00000h
+ 00000753			OutputDisplayWord endp
+
+				;Note that we use branching logic here.
+				;Since all of the values are set before the proc is called
+				;we should avoid any branch prediction issues
+ 00000753			CheckState proc uses eax edx
+ 00000753  50		   *	    push   eax
+ 00000754  52		   *	    push   edx
+ 00000755  A1 0000028A R		mov eax, failState			;load the failure count into eax
+ 0000075A  3B 05 00000292 R		cmp eax, maxFailure			;and compare it with the maximum failure count
+ 00000760  7E 07			jle NoFail					;If we're below the max, check if we have succeeded
+ 00000762  BA 00000296 R		mov edx, OFFSET messageFail		;Otherwise prep the failure message
+ 00000767  EB 12			jmp Output					;And skip to the output step
+ 00000769			NoFail:
+ 00000769  A1 0000028E R		mov eax, successState		;Load the current number of successfully guessed letters
+ 0000076E  3B 05 00000239 R		cmp eax, targetWordLength	;and compare it with the total number of letters in the word
+ 00000774  7C 0F			jl Fini						;If the correct letters are fewer than the total letters, we ain't done yet. Skip to the end
+ 00000776  BA 000002F0 R		mov edx, OFFSET messageSuccess		;Otherwise, the guesser has won so load the success message
+					;jmp Output					;Don't currently need to jump to Output, but if this order changes we may
+ 0000077B			Output:
+ 0000077B  E8 00000000 E		call WriteString			;Output fail or success message
+ 00000780  E8 00000000 E		call Crlf
+ 00000785			Fini: ; 
+					ret
+ 00000785  5A		   *	    pop    edx
+ 00000786  58		   *	    pop    eax
+ 00000787  C3		   *	    ret    00000h
+ 00000788			CheckState endp
+
+ 00000788			TestGetNames proc
+ 00000788  E8 FFFFFE5D			call GetNames
+ 0000078D  BA 00000017 R		mov edx, OFFSET playerNameSugar
+ 00000792  E8 00000000 E		call WriteString
+ 00000797  BA 000000BD R		mov edx, OFFSET player1Name
+ 0000079C  E8 00000000 E		call WriteString
+ 000007A1  E8 00000000 E		call Crlf
+ 000007A6  BA 00000017 R		mov edx, OFFSET playerNameSugar
+ 000007AB  E8 00000000 E		call WriteString
+ 000007B0  BA 000000CD R		mov edx, OFFSET player2Name
+ 000007B5  E8 00000000 E		call WriteString
+ 000007BA  E8 00000000 E		call Crlf
+ 000007BF  C3				ret
+ 000007C0			TestGetNames endp
+
+ 000007C0			TestGetWordMaxLength proc
+ 000007C0  E8 FFFFFE50			call GetWordMaxLength
+ 000007C5  BA 0000005A R		mov edx, OFFSET wordMaxLengthSugar
+ 000007CA  E8 00000000 E		call WriteString
+ 000007CF  A1 00000125 R		mov eax, wordMaxLength
+ 000007D4  E8 00000000 E		call WriteDec
+ 000007D9  E8 00000000 E		call Crlf
+ 000007DE  C3				ret
+ 000007DF			TestGetWordMaxLength endp
+
+ 000007DF			TestGetWinningScore proc
+ 000007DF  E8 FFFFFE41			call GetWinningScore
+ 000007E4  BA 00000043 R		mov edx, OFFSET winningScoreSugar
+ 000007E9  E8 00000000 E		call WriteString
+ 000007EE  A1 00000155 R		mov eax, winningScore
+ 000007F3  E8 00000000 E		call WriteDec
+ 000007F8  E8 00000000 E		call Crlf
+ 000007FD  C3				ret
+ 000007FE			TestGetWinningScore endp
+
+ 000007FE			TestGetTargetWord proc
+ 000007FE  E8 FFFFFE32			call GetTargetWord
+ 00000803  BA 0000002E R		mov edx, OFFSET targetWordSugar
+ 00000808  E8 00000000 E		call WriteString
+ 0000080D  BA 00000171 R		mov edx, OFFSET targetWord
+ 00000812  E8 00000000 E		call WriteString
+ 00000817  E8 00000000 E		call Crlf
+ 0000081C  C3				ret
+ 0000081D			TestGetTargetWord endp
+
+ 0000081D			TestGetGuess proc
+ 0000081D  E8 FFFFFE51			call GetGuess
+ 00000822  33 C0			xor eax, eax
+ 00000824  A0 00000268 R		mov al, currentGuess
+ 00000829  E8 00000000 E		call WriteChar
+ 0000082E  E8 00000000 E		call Crlf
+ 00000833  E8 FFFFFE52			call CheckGuess
+ 00000838  C3				ret
+ 00000839			TestGetGuess endp
+
+ 00000839			TestGuesses proc
+ 00000839  E8 FFFFFDF7			call GetTargetWord				;Get a target word
+ 0000083E  B9 0000000A			mov ecx, 10						;give us ten guesses
+ 00000843			TestGuessLoop:
+ 00000843  E8 FFFFFE2B			call GetGuess					;Get a guess
+ 00000848  E8 FFFFFE3D			call CheckGuess					;Check it
+ 0000084D  E8 FFFFFEB2			call OutputGuesses				;Output the current list of guesses
+ 00000852  E8 00000000 E		call Crlf
+ 00000857  E2 EA		loop TestGuessLoop
+ 00000859  C3				ret
+ 0000085A			TestGuesses endp
+
+ 0000085A			TestIo PROC
+					;call TestGetNames
+ 0000085A  E8 FFFFFF61			call TestGetWordMaxLength
+ 0000085F  E8 FFFFFF7B			call TestGetWinningScore
+ 00000864  E8 FFFFFF95			call TestGetTargetWord
+ 00000869  E8 FFFFFFAF			call TestGetGuess
+ 0000086E  C3				ret
+ 0000086F			TestIo ENDP
+
+
+ 0000086F			TestGameLogic proc
+ 0000086F  E8 FFFFFFC5			call TestGuesses
+ 00000874  C3				ret
+ 00000875			TestGameLogic endp	
+
+ 00000875			TestGame proc
+ 00000875  E8 FFFFFDBB			call GetTargetWord
+ 0000087A  B9 00000064			mov ecx, 100
+ 0000087F			GameLoop:
+ 0000087F  E8 FFFFFDEF			call GetGuess
+ 00000884  E8 00000000 E		call WriteChar
+ 00000889  E8 00000000 E		call Crlf
+ 0000088E  E8 FFFFFDF7			call CheckGuess
+ 00000893  E8 00000000 E		call Crlf
+ 00000898  E8 FFFFFE67			call OutputGuesses
+ 0000089D  E8 00000000 E		call Crlf
+ 000008A2  E8 FFFFFE8F			call OutputDisplayWord
+ 000008A7  E8 00000000 E		call Crlf
+ 000008AC  A1 0000028A R		mov eax, failState
+ 000008B1  E8 00000000 E		call WriteInt
+ 000008B6  E8 00000000 E		call Crlf
+ 000008BB  A1 0000028E R		mov eax, successState
+ 000008C0  E8 00000000 E		call WriteInt
+ 000008C5  E8 00000000 E		call Crlf
+ 000008CA  E8 FFFFFE84			call CheckState
+ 000008CF  E2 AE		loop GameLoop
+ 000008D1  C3				ret
+ 000008D2			TestGame endp
+
+ 000008D2			TestHangedMan proc
+ 000008D2  C6 05 000003BA R		mov startx, 10
+	   0A
+ 000008D9  C6 05 000003B9 R		mov starty, 10
+	   0A
+ 000008E0  C7 05 0000028A R		mov failState, 1
+	   00000001
+ 000008EA  E8 FFFFF711			call DrawHangman
+ 000008EF  C3				ret
+ 000008F0			TestHangedMan endp
+
+ 000008F0			main proc
+					;call TestIo
+					;call TestGameLogic
+					;call TestGame
+ 000008F0  E8 FFFFFFDD			call TestHangedMan
 					invoke ExitProcess,0
- 000000F2  6A 00	   *	    push   +000000000h
- 000000F4  E8 00000000 E   *	    call   ExitProcess
- 000000F9			main endp
+ 000008F5  6A 00	   *	    push   +000000000h
+ 000008F7  E8 00000000 E   *	    call   ExitProcess
+ 000008FC			main endp
 				end main
-Microsoft (R) Macro Assembler Version 14.10.25019.0	    11/28/17 13:35:49
+Microsoft (R) Macro Assembler Version 14.10.25019.0	    12/07/17 08:48:27
 Hangman	(hangman.asm				     Symbols 2 - 1
 
 
@@ -300,19 +1166,29 @@ Segments and Groups:
 
 FLAT . . . . . . . . . . . . . .	GROUP
 STACK  . . . . . . . . . . . . .	32 Bit	 00001000 Para	  Stack	  'STACK'	 
-_DATA  . . . . . . . . . . . . .	32 Bit	 0000018E Para	  Public  'DATA'	
-_TEXT  . . . . . . . . . . . . .	32 Bit	 000000F9 Para	  Public  'CODE'	
+_DATA  . . . . . . . . . . . . .	32 Bit	 000003BB Para	  Public  'DATA'	
+_TEXT  . . . . . . . . . . . . .	32 Bit	 000008FC Para	  Public  'CODE'	
 
 
 Procedures, parameters, and locals:
 
                 N a m e                 Type     Value    Attr
 
-CallAndResponse  . . . . . . . .	P Near	 00000000 _TEXT	Length= 00000020 Public STDCALL
+CallAndResponseInt . . . . . . .	P Near	 000005CB _TEXT	Length= 0000001F Public STDCALL
+  promptAddress  . . . . . . . .	DWord	 bp + 00000008
+  answerAddress  . . . . . . . .	DWord	 bp + 0000000C
+CallAndResponseString  . . . . .	P Near	 000005AB _TEXT	Length= 00000020 Public STDCALL
   promptAddress  . . . . . . . .	DWord	 bp + 00000008
   answerAddress  . . . . . . . .	DWord	 bp + 0000000C
   answerMaxSize  . . . . . . . .	DWord	 bp + 00000010
-CheckGuess . . . . . . . . . . .	P Near	 000000CF _TEXT	Length= 00000000 Public STDCALL
+CheckGuess . . . . . . . . . . .	P Near	 0000068A _TEXT	Length= 0000007A Public STDCALL
+  Unguessed  . . . . . . . . . .	L Near	 000006B3 _TEXT	
+  WalkTargetWord . . . . . . . .	L Near	 000006C6 _TEXT	
+  finish . . . . . . . . . . . .	L Near	 000006FD _TEXT	
+CheckState . . . . . . . . . . .	P Near	 00000753 _TEXT	Length= 00000035 Public STDCALL
+  NoFail . . . . . . . . . . . .	L Near	 00000769 _TEXT	
+  Output . . . . . . . . . . . .	L Near	 0000077B _TEXT	
+  Fini . . . . . . . . . . . . .	L Near	 00000785 _TEXT	
 CloseFile  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 CloseHandle  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 Clrscr . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
@@ -320,6 +1196,8 @@ CreateFileA  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External
 CreateOutputFile . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 Crlf . . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 Delay  . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+DrawHangman  . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 000005AB Public STDCALL
+  fini . . . . . . . . . . . . .	L Near	 000005A6 _TEXT	
 DumpMem  . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 DumpRegs . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 ExitProcess  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
@@ -335,23 +1213,23 @@ GetConsoleMode . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External
 GetConsoleScreenBufferInfo . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 GetDateTime  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 GetFileTime  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-GetGuess . . . . . . . . . . . .	P Near	 000000C0 _TEXT	Length= 0000000F Public STDCALL
+GetGuess . . . . . . . . . . . .	P Near	 00000673 _TEXT	Length= 00000017 Public STDCALL
 GetKeyState  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 GetLastError . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 GetLocalTime . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-GetMaxWordLength . . . . . . . .	P Near	 00000084 _TEXT	Length= 00000014 Public STDCALL
 GetMaxXY . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 GetMseconds  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-GetNames1  . . . . . . . . . . .	P Near	 0000004B _TEXT	Length= 00000039 Public STDCALL
-GetNames . . . . . . . . . . . .	P Near	 00000020 _TEXT	Length= 0000002B Public STDCALL
+GetNames . . . . . . . . . . . .	P Near	 000005EA _TEXT	Length= 0000002B Public STDCALL
 GetNumberOfConsoleInputEvents  .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 GetProcessHeap . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 GetStdHandle . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 GetSystemTime  . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-GetTargetWord  . . . . . . . . .	P Near	 000000AC _TEXT	Length= 00000014 Public STDCALL
+GetTargetWord  . . . . . . . . .	P Near	 00000635 _TEXT	Length= 0000003E Public STDCALL
+  CreateDisplayWord  . . . . . .	L Near	 0000065E _TEXT	
 GetTextColor . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 GetTickCount . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-GetWinningScore  . . . . . . . .	P Near	 00000098 _TEXT	Length= 00000014 Public STDCALL
+GetWinningScore  . . . . . . . .	P Near	 00000625 _TEXT	Length= 00000010 Public STDCALL
+GetWordMaxLength . . . . . . . .	P Near	 00000615 _TEXT	Length= 00000010 Public STDCALL
 Gotoxy . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 HeapAlloc  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 HeapCreate . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
@@ -364,6 +1242,10 @@ MessageBoxA  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External
 MsgBoxAsk  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 MsgBox . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 OpenInputFile  . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+OutputDisplayWord  . . . . . . .	P Near	 00000736 _TEXT	Length= 0000001D Public STDCALL
+  WalkDisplayWord  . . . . . . .	L Near	 00000741 _TEXT	
+OutputGuesses  . . . . . . . . .	P Near	 00000704 _TEXT	Length= 00000032 Public STDCALL
+  WalkAlphaleft  . . . . . . . .	L Near	 00000711 _TEXT	
 ParseDecimal32 . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 ParseInteger32 . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 PeekConsoleInputA  . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
@@ -401,6 +1283,18 @@ Str_length . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External
 Str_trim . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 Str_ucase  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 SystemTimeToFileTime . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+TestGameLogic  . . . . . . . . .	P Near	 0000086F _TEXT	Length= 00000006 Public STDCALL
+TestGame . . . . . . . . . . . .	P Near	 00000875 _TEXT	Length= 0000005D Public STDCALL
+  GameLoop . . . . . . . . . . .	L Near	 0000087F _TEXT	
+TestGetGuess . . . . . . . . . .	P Near	 0000081D _TEXT	Length= 0000001C Public STDCALL
+TestGetNames . . . . . . . . . .	P Near	 00000788 _TEXT	Length= 00000038 Public STDCALL
+TestGetTargetWord  . . . . . . .	P Near	 000007FE _TEXT	Length= 0000001F Public STDCALL
+TestGetWinningScore  . . . . . .	P Near	 000007DF _TEXT	Length= 0000001F Public STDCALL
+TestGetWordMaxLength . . . . . .	P Near	 000007C0 _TEXT	Length= 0000001F Public STDCALL
+TestGuesses  . . . . . . . . . .	P Near	 00000839 _TEXT	Length= 00000021 Public STDCALL
+  TestGuessLoop  . . . . . . . .	L Near	 00000843 _TEXT	
+TestHangedMan  . . . . . . . . .	P Near	 000008D2 _TEXT	Length= 0000001E Public STDCALL
+TestIo . . . . . . . . . . . . .	P Near	 0000085A _TEXT	Length= 00000015 Public STDCALL
 WaitMsg  . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteBinB  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteBin . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
@@ -419,7 +1313,7 @@ WriteStackFrame  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External
 WriteString  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteToFile  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
 WriteWindowsMsg  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
-main . . . . . . . . . . . . . .	P Near	 000000CF _TEXT	Length= 0000002A Public STDCALL
+main . . . . . . . . . . . . . .	P Near	 000008F0 _TEXT	Length= 0000000C Public STDCALL
 printf . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
 scanf  . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
 wsprintfA  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
@@ -638,15 +1532,20 @@ VK_UP  . . . . . . . . . . . . .	Number	 00000026h
 WINDOW_BUFFER_SIZE_EVENT . . . .	Number	 00000004h   
 WriteConsoleOutputCharacter  . .	Text   	 WriteConsoleOutputCharacterA
 WriteConsole . . . . . . . . . .	Text   	 WriteConsoleA
+alphaLeft  . . . . . . . . . . .	Byte	 0000039E _DATA	
+alphabet . . . . . . . . . . . .	Byte	 00000383 _DATA	
 black  . . . . . . . . . . . . .	Number	 00000000h   
 blue . . . . . . . . . . . . . .	Number	 00000001h   
 brown  . . . . . . . . . . . . .	Number	 00000006h   
-currentGuess . . . . . . . . . .	Byte	 0000018D _DATA	
+currentGuess . . . . . . . . . .	Byte	 00000268 _DATA	
 cyan . . . . . . . . . . . . . .	Number	 00000003h   
-defaultMaxAnswerLength . . . . .	DWord	 00000000 _DATA	
+defaultMaxAnswerLength . . . . .	DWord	 00000073 _DATA	
+displayWord  . . . . . . . . . .	Byte	 000001D5 _DATA	
 exit . . . . . . . . . . . . . .	Text   	 INVOKE ExitProcess,0
+failState  . . . . . . . . . . .	DWord	 0000028A _DATA	
 gray . . . . . . . . . . . . . .	Number	 00000008h   
 green  . . . . . . . . . . . . .	Number	 00000002h   
+guessSugar . . . . . . . . . . .	Byte	 00000000 _DATA	
 lightBlue  . . . . . . . . . . .	Number	 00000009h   
 lightCyan  . . . . . . . . . . .	Number	 0000000Bh   
 lightGray  . . . . . . . . . . .	Number	 00000007h   
@@ -654,20 +1553,32 @@ lightGreen . . . . . . . . . . .	Number	 0000000Ah
 lightMagenta . . . . . . . . . .	Number	 0000000Dh   
 lightRed . . . . . . . . . . . .	Number	 0000000Ch   
 magenta  . . . . . . . . . . . .	Number	 00000005h   
-nameMaxLength  . . . . . . . . .	DWord	 0000006A _DATA	
-player1Name  . . . . . . . . . .	Byte	 0000004A _DATA	
-player2Name  . . . . . . . . . .	Byte	 0000005A _DATA	
-promptGuess  . . . . . . . . . .	Byte	 00000162 _DATA	
-promptNamePlayer1  . . . . . . .	Byte	 00000004 _DATA	
-promptNamePlayer2  . . . . . . .	Byte	 00000027 _DATA	
-promptTargetWord . . . . . . . .	Byte	 000000E6 _DATA	
-promptWinningScore . . . . . . .	Byte	 000000B6 _DATA	
-promptWordMaxLength  . . . . . .	Byte	 0000006E _DATA	
+maxFailure . . . . . . . . . . .	DWord	 00000292 _DATA	
+messageAlreadyGuessed  . . . . .	Byte	 00000269 _DATA	
+messageFail  . . . . . . . . . .	Byte	 00000296 _DATA	
+messageSuccess . . . . . . . . .	Byte	 000002F0 _DATA	
+nameMaxLength  . . . . . . . . .	DWord	 000000DD _DATA	
+player1Name  . . . . . . . . . .	Byte	 000000BD _DATA	
+player2Name  . . . . . . . . . .	Byte	 000000CD _DATA	
+playerNameSugar  . . . . . . . .	Byte	 00000017 _DATA	
+promptGuess  . . . . . . . . . .	Byte	 0000023D _DATA	
+promptNamePlayer1  . . . . . . .	Byte	 00000077 _DATA	
+promptNamePlayer2  . . . . . . .	Byte	 0000009A _DATA	
+promptTargetWord . . . . . . . .	Byte	 00000159 _DATA	
+promptWinningScore . . . . . . .	Byte	 00000129 _DATA	
+promptWordMaxLength  . . . . . .	Byte	 000000E1 _DATA	
 red  . . . . . . . . . . . . . .	Number	 00000004h   
-targetWord . . . . . . . . . . .	Byte	 000000FE _DATA	
+startx . . . . . . . . . . . . .	Byte	 000003BA _DATA	
+starty . . . . . . . . . . . . .	Byte	 000003B9 _DATA	
+successState . . . . . . . . . .	DWord	 0000028E _DATA	
+targetWordLength . . . . . . . .	DWord	 00000239 _DATA	
+targetWordSugar  . . . . . . . .	Byte	 0000002E _DATA	
+targetWord . . . . . . . . . . .	Byte	 00000171 _DATA	
 white  . . . . . . . . . . . . .	Number	 0000000Fh   
-winningScore . . . . . . . . . .	DWord	 000000E2 _DATA	
-wordMaxLength  . . . . . . . . .	DWord	 000000B2 _DATA	
+winningScoreSugar  . . . . . . .	Byte	 00000043 _DATA	
+winningScore . . . . . . . . . .	DWord	 00000155 _DATA	
+wordMaxLengthSugar . . . . . . .	Byte	 0000005A _DATA	
+wordMaxLength  . . . . . . . . .	DWord	 00000125 _DATA	
 wsprintf . . . . . . . . . . . .	Text   	 wsprintfA
 yellow . . . . . . . . . . . . .	Number	 0000000Eh   
 
