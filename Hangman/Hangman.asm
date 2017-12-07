@@ -57,17 +57,9 @@ startx byte 0
 .code
 DrawHangman proc uses edx eax ebx ecx
 ; gallows
-	mov dh, starty
-	add dh, 1
-	mov dl, startx
-	add dl, 6
-
-	call Gotoxy
-	mov al, 7Ch
-	call WriteChar
 
 ; torque
-	mov dh, starty
+	mov dh, starty  
 	mov dl, startx 
 	add dl, 7
 
@@ -75,135 +67,44 @@ DrawHangman proc uses edx eax ebx ecx
 	mov al, 5Fh
 	call WriteChar
 
-	mov dh, starty
-	mov dl, startx
-	add dl, 8
-
+	inc dl
 	call Gotoxy
 	mov al, 5Fh
 	call WriteChar
 
-	mov dh, starty
-	mov dl, startx
-	add dl, 9
-
+	inc dl
 	call Gotoxy
 	mov al, 5Fh
 	call WriteChar
 
-	mov dh, starty
-	mov dl, startx
-	add dl, 10
-
+	inc dl
 	call Gotoxy
 	mov al, 5Fh
 	call WriteChar
 
-	mov dh, starty
-	mov dl, startx
-	add dl, 11
-
+	inc dl
 	call Gotoxy
 	mov al, 5Fh
 	call WriteChar
 	
-	mov dh, starty
-	mov dl, startx
-	add dl, 12
-
+	inc dl
 	call Gotoxy
 	mov al, 5Fh
 	call WriteChar
 ; 
+	; loop for the gallow
+	mov ecx, 9
 	mov dh, starty
-	add dh, 1
 	mov dl, startx
-	add dl, 13
-
-	call Gotoxy
+	add dl,13
 	mov al, 7Ch
-	call WriteChar
 
-	mov dh, starty
-	add dh, 2
-	mov dl, startx
-	add dl, 13
+L1:
 
+	inc dh
 	call Gotoxy
-	mov al, 7Ch
-	call WriteChar
-
-	mov dh, starty
-	add dh, 3
-	mov dl, startx
-	add dl, 13
-
-	call Gotoxy
-	mov al, 7Ch
-	call WriteChar
-
-	mov dh, starty
-	add dh, 4
-	mov dl, startx
-	add dl, 13
-
-	call Gotoxy
-	mov al, 7Ch
-	call WriteChar
-
-	mov dh, starty
-	add dh, 5
-	mov dl, startx
-	add dl, 13
-
-	call Gotoxy
-	mov al, 7Ch
-	call WriteChar
-
-	mov dh, starty
-	add dh, 6
-	mov dl, startx
-	add dl, 13
-
-	call Gotoxy
-	mov al, 7Ch
-	call WriteChar
-
-	mov dh, starty
-	add dh, 7
-	mov dl, startx
-	add dl, 13
-
-	call Gotoxy
-	mov al, 7Ch
-	call WriteChar
-
-	mov dh, starty
-	add dh, 8
-	mov dl, startx
-	add dl, 13
-
-	call Gotoxy
-	mov al, 7Ch
-	call WriteChar
-
-	mov dh, starty
-	add dh, 9
-	mov dl, startx
-	add dl, 13
-
-	call Gotoxy
-	mov al, 7Ch
-	call WriteChar
-
-	mov dh, starty
-	add dh, 8
-	mov dl, startx
-	add dl, 13
-
-	call Gotoxy
-	mov al, 7Ch
-	call WriteChar
+	call WriteChar							;7Ch
+LOOP L1
 
 	
 ; continue of the hanger
@@ -280,16 +181,6 @@ DrawHangman proc uses edx eax ebx ecx
 	mov al, 5Fh
 	call WriteChar
 
-; creates void space for the "press any key to continue" 
-	mov dh, starty
-	add dh, 20
-	mov dl, startx
-	add dl, 20
-
-	call Gotoxy
-	mov al, 20h
-	call WriteChar
-	call crlf 
 
 ; head 
 	xor ebx, ebx
@@ -342,16 +233,6 @@ DrawHangman proc uses edx eax ebx ecx
 	mov al, 7Ch
 	call WriteChar
 
-; creates void space for the "press any key to continue" 
-	mov dh, starty
-	add dh, 20
-	mov dl, startx
-	add dl, 20
-
-	call Gotoxy
-	mov al, 20h
-	call WriteChar
-	call crlf 
 		
 ; first left leg part
 	inc ebx				;We want to draw the body if failState >= 3
@@ -386,17 +267,6 @@ DrawHangman proc uses edx eax ebx ecx
 	call Gotoxy
 	mov al, 5Fh
 	call WriteChar
-
-; creates void space for the "press any key to continue" 
-	mov dh, starty
-	add dh, 20
-	mov dl, startx
-	add dl, 20
-
-	call Gotoxy
-	mov al, 20h
-	call WriteChar
-	call crlf 
 
 ; first right leg part
 	inc ebx				;We want to draw the body if failState >= 4
@@ -433,16 +303,6 @@ DrawHangman proc uses edx eax ebx ecx
 	mov al, 5Fh
 	call WriteChar
 	
-; creates void space for the "press any key to continue" 
-	mov dh, starty
-	add dh, 20
-	mov dl, startx
-	add dl, 20
-
-	call Gotoxy
-	mov al, 20h
-	call WriteChar
-	call crlf 
 
 ; left first arm 
 	inc ebx             ;We want to draw the body if failState >= 5
@@ -458,7 +318,7 @@ DrawHangman proc uses edx eax ebx ecx
 	mov al, 2Fh
 	call WriteChar
 
-	; left second arm 
+; left second arm 
 	mov dh, starty 
 	add dh, 4
 	mov dl, startx
@@ -467,17 +327,6 @@ DrawHangman proc uses edx eax ebx ecx
 	call Gotoxy
 	mov al, 2Fh
 	call WriteChar
-
-; creates void space for the "press any key to continue" 
-	mov dh, starty
-	add dh, 20
-	mov dl, startx
-	add dl, 20
-
-	call Gotoxy
-	mov al, 20h
-	call WriteChar
-	call crlf 
 
 ; right first arm    	
 	inc ebx				;We want to draw the body if failState >= 6
@@ -503,12 +352,9 @@ DrawHangman proc uses edx eax ebx ecx
 	mov al, 5Ch
 	call WriteChar
 
-	call Gotoxy
-	mov al, 20h
-	call WriteChar
-	call crlf 
 
-; creates void space so that after the last thing that is printed goes to (20,20) and then displays "press any key to continue"
+fini:
+; creates void space for the "press any key to continue" 
 	mov dh, starty
 	add dh, 20
 	mov dl, startx
@@ -519,7 +365,6 @@ DrawHangman proc uses edx eax ebx ecx
 	call WriteChar
 	call crlf 
 
-fini:
 	ret 
 DrawHangman endp
 
@@ -634,6 +479,7 @@ CheckGuess proc USES eax ebx ecx edx edi esi
 	mov bl, al					;Use bl to compare the guess to the index character in alphaLeft
 	sub al, 41h					;Subtract 41h from the guess's ASCII code to convert the code to an index on alphaLeft		
 	cmp	bl, alphaLeft[eax]
+
 	je Unguessed				;If they're the same (ZF set), the letter has not been previously guessed.
 	mov edx, OFFSET messageAlreadyGuessed	;otherwise the letter has been previously guessed
 	call WriteString			;So tell them
@@ -1271,7 +1117,7 @@ TestDisplayUI endp
 TestHangedMan proc
 	mov startx, 10
 	mov starty, 10
-	mov failState, 0
+ ;mov failState, 0
 	call DrawHangman
 	ret
 TestHangedMan endp
