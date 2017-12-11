@@ -27,8 +27,16 @@ player1Name BYTE 16 DUP(0)
 player2Name BYTE 16 DUP(0)
 nameMaxLength DWORD 16
 
-player1guesser BYTE "Guesser!",0
-player2guesser BYTE "Guesser!",0
+p1GuesserBool BYTE 1
+p2GuesserBool BYTE 1
+P1GuesserTag BYTE "    Guesser!",0
+P2GuesserTag BYTE "Guesser!    ",0
+executionerTag BYTE "Executioner!",0
+P1TagCoordX BYTE 22
+P1TagCoordY BYTE 1
+
+P2TagCoordX BYTE 76
+P2TagCoordY BYTE 1
 
 promptWordMaxLength BYTE "Input the maximum length of the words you wish to play with today: ",0
 wordMaxLength DWORD 16
@@ -58,8 +66,8 @@ messageSuccess BYTE "They laughed at you, but you always knew those neck curls w
 statusMessageX BYTE 0
 statusMessageY BYTE 22
 
-player1Score DWORD 0
-player2Score DWORD 0
+player1Score BYTE 0
+player2Score BYTE 0
 
 alphabet BYTE "ABCDEFGHIJKLMNOPQRSTUVWXYZ",0
 alphaLeft BYTE "ABCDEFGHIJKLMNOPQRSTUVWXYZ",0
@@ -69,6 +77,7 @@ guessesY BYTE 16
 ; ascii data, start x and y coordinates 
 starty byte 0
 startx byte 0
+
 
 .code
 DrawHangman proc uses edx eax ebx ecx
@@ -575,7 +584,7 @@ OutputDisplayWord endp
 
 ;Note that we use branching logic here.
 ;Should work to fix this
-CheckState proc uses eax edx
+CheckState proc uses eax ebx ecx edx
 	call ClearStatusMessage
 	mov dl, statusMessageX			;Go to the status message coordinates
 	mov dh, statusMessageY
@@ -584,17 +593,28 @@ CheckState proc uses eax edx
     cmp eax, maxFailure            	;and compare it with the maximum failure count
     jl NoFail          				;If we're below the max, check if we have succeeded
     mov edx, OFFSET messageFail   	;Otherwise prep the failure message
-    inc player1Score
-    jmp Output                    ;And skip to the output step
+									;Guesser has failed so we need to increment the executioner's score
+	mov ecx, player1Score			;load player1's score
+	add ecx, p2GuesserBool			;if player1 is executioner, then p2 is the guesser and the bool = 1, so p1 gets a point added
+	mov player1Score, ecx			;store p1 score	
+	mov ecx, player2Score			;load p2 score
+	add ecx, p1GuesserBool			;if p2 is executioner, then p1 is the guesser and the bool = 1, so p2 adds a point
+	mov player2Score, ecx
+    jmp Output                    	;And skip to the output step
 NoFail:
-    mov eax, successState        ;Load the current number of successfully guessed letters
-    cmp eax, targetWordLength    ;and compare it with the total number of letters in the word
-    jl Fini                        ;If the correct letters are fewer than the total letters, we ain't done yet. Skip to the end
-    mov edx, OFFSET messageSuccess        ;Otherwise, the guesser has won so load the success message
-    inc player2Score
-    ;jmp Output                    ;Don't currently need to jump to Output, but if this order changes we may
+    mov eax, successState        		;Load the current number of successfully guessed letters
+    cmp eax, targetWordLength    		;and compare it with the total number of letters in the word
+    jl Fini                        		;If the correct letters are fewer than the total letters, we ain't done yet. Skip to the end
+    mov edx, OFFSET messageSuccess      ;Otherwise, the guesser has won so load the success message
+    mov ebx, player1Score				;Guesser has succeeded and needs a point
+	add ebx, p1GuesserBool				;If player 1 was the guesser, the bool will be one, otherwise it will be zero
+	mov player1Score, ebx				
+	mov ebx, player2Score
+	add ebx, p2GuesserBool
+	mov player2Score, ebx
+    ;jmp Output                    		;Don't currently need to jump to Output, but if this order changes we may
 Output:
-    call WriteString            ;Output fail or success message
+    call WriteString            		;Output fail or success message
     call Crlf
 Fini: 
     ret
@@ -1044,14 +1064,16 @@ DisplayScore proc
     mov dh, 1
     mov dl, 53
     call Gotoxy
-    mov eax, player1Score
-    call WriteInt
+	xor eax, eax
+    mov al, player1Score
+    call WriteDec
 
     mov dh, 1
     mov dl, 56
     call Gotoxy
-    mov eax, player2Score
-    call WriteInt
+	xor eax, eax
+    mov al, player2Score
+    call WriteDec
 
     mov dh, 20
     mov dl, 0
@@ -1080,52 +1102,37 @@ checkRoles proc
     ret
 checkRoles endp
 
-
-
-roleAssignment proc
-;
-; i think there should probably be some kind of jump right here
-; we can use the current round as an indicator for when to jump
-; if the round is even then player 1 is the guesser, so the player1guesser message should pop up
-;
-; prints next to player 1s name when they are the guesser    
-    mov dh, 1
-    mov dl, 26
-    call Gotoxy
-    mov edx, OFFSET player1guesser
-    call WriteString
-
-; heres to clear out the player 2's guesser mark    
-    mov ECX, 4
-    mov dl, 76
-    mov dh, 1
-    mov al, 20h ; space
-L1:
-    call WriteChar
-LOOP L1
-
-
-; prints next to player 2s name when they are the guesser    
-    mov dh, 1
-    mov dl, 76
-    call Gotoxy
-    mov edx, OFFSET player2guesser
-    Call WriteString
-
-; heres to clear out player 1s guesser mark    
-    mov ECX, 4
-    mov dl, 26
-    mov dh, 1
-    mov al, 20h ; space
-L2:
-    call WriteChar
-LOOP L2
-
-; move gotoxy back to the end
-    mov dh, 20
-    mov dl, 0
-    call Gotoxy
-
+roleAssignment proc uses eax ebx ecx edx
+	xor ecx, ecx
+	mov al, player1Score 						;add together players scores to determine round
+	add al, player2Score
+	mov dl, P1TagCoordX
+	mov dh, P1TagCoordY
+	Call Gotoxy
+	
+	test al, 1			 						;Bitwise and with the score and 1. Will set the zero flag if the score is even
+												;Will clear the zero flag if the score is odd
+	mov ebx, OFFSET executionerTag				;load executioner tag address into ebx
+	cmovne edx, ebx								;if zero flag is clear then the round is even (Our round count is score+1)
+												;so Player 1 is the executioner
+	mov ebx, OFFSET P1GuesserTag				;load the guesser tag into ebx
+	cmove edx, ebx								;if the zero flag is set then the round is odd so p1 is the guesser
+	call WriteString							
+	mov p1GuesserBool, 0						;clear the flag for player1 being the guesser
+	sete p1GuesserBool							;if the round is odd, we want to set the flag for p1 being the guesser
+	
+	mov dl, P2TagCoordX
+	mov dh, P2TagCoordY
+	Call Gotoxy
+	
+	mov ebx, OFFSET P2GuesserTag
+	cmove edx, ebx
+	mov ebx, OFFSET executionerTag
+	cmovne edx, ebx
+	call WriteString
+	mov p2GuesserBool, 0
+	setne p2GuesserBool
+	
     ret
 roleAssignment endp
 
