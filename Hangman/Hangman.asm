@@ -10,7 +10,6 @@ INCLUDE Irvine32.inc
 .data
 
 ;Test data
-currentRoundmessage BYTE "Current Round:",0
 guessSugar BYTE "The current guess is: ",0
 playerNameSugar BYTE "The player's name is: ",0
 targetWordSugar BYTE "The target word is: ",0
@@ -20,6 +19,7 @@ wordMaxLengthSugar BYTE "The max word length is: ",0
 ;Production data
 defaultMaxAnswerLength DWORD 16
 currentRound DWORD 1
+currentRoundmessage BYTE "Current Round:",0
 
 promptNamePlayer1 BYTE "Player 1 you will start as the executioner, please enter your name: ",0
 promptNamePlayer2 BYTE "Player 2 you will start as the guesser, please enter your name: ",0
@@ -40,23 +40,31 @@ promptTargetWord BYTE "Executioner, input the target word: ",0
 targetWord BYTE 100 DUP(0)
 displayWord BYTE 100 DUP(0)
 targetWordLength DWORD 0
+displayWordX BYTE 60
+displayWordY BYTE 10
 
 
 promptGuess BYTE "Guesser, input the letter you would like to guess: ",0
 currentGuess BYTE 0
 messageAlreadyGuessed BYTE "That letter was already guessed.",0
+getGuessX BYTE 0
+getGuessY BYTE 21
 
 failState DWORD 0
 successState DWORD 0
 maxFailure DWORD 6
 messageFail BYTE "With a horrible snap, your virtual avatar's neck gives way to gravity's ceaseless urging.",0
 messageSuccess BYTE "They laughed at you, but you always knew those neck curls would prove useful. The rope gives way before your neck does and you live to play again.",0
+statusMessageX BYTE 0
+statusMessageY BYTE 22
 
 player1Score DWORD 0
 player2Score DWORD 0
 
 alphabet BYTE "ABCDEFGHIJKLMNOPQRSTUVWXYZ",0
 alphaLeft BYTE "ABCDEFGHIJKLMNOPQRSTUVWXYZ",0
+guessesX BYTE 27
+guessesY BYTE 16
 
 ; ascii data, start x and y coordinates 
 starty byte 0
@@ -455,9 +463,26 @@ loop CreateDisplayWord
     ret
 GetTargetWord endp
 
+ClearStatusMessage proc uses edx
+	mov dl, statusMessageX		;Goto the status message coords
+	mov dh, statusMessageY
+	call Gotoxy
+	mov al, 20h					;Load a blank space into our WriteChar buffer
+	mov ecx, 100				;Load loop counter
+ClearMessage:
+	call WriteChar
+	inc dl
+	call Gotoxy
+Loop ClearMessage
+	ret
+ClearStatusMessage endp
+
 ;Gets a letter from the guesser and store it in currentGuess
-GetGuess proc
+GetGuess proc uses eax edx
     ;First we need to get the guess from the user
+	mov dh, getGuessY	;Move to the input coordinates
+	mov dl, getGuessX
+	call Gotoxy
     mov edx, OFFSET promptGuess
     call WriteString
     call ReadChar            ;store the guess in al
@@ -466,8 +491,8 @@ GetGuess proc
     ret
 GetGuess endp
 
-
 CheckGuess proc USES eax ebx ecx edx edi esi
+	call ClearStatusMessage
     xor eax, eax                ;clear eax
     xor edx, edx                ;clear edx
     xor edi, edi                ;clear edi, will be our running total of characters in the target word matched by guess
@@ -478,6 +503,9 @@ CheckGuess proc USES eax ebx ecx edx edi esi
     cmp    bl, alphaLeft[eax]
 
     je Unguessed                ;If they're the same (ZF set), the letter has not been previously guessed.
+	mov dl, statusMessageX		;Move to the status message coordinates
+	mov dh, statusMessageY
+	call Gotoxy
     mov edx, OFFSET messageAlreadyGuessed    ;otherwise the letter has been previously guessed
     call WriteString            ;So tell them
     jmp finish                    ;and exit -- If we combine GetGuess with CheckGuess, we can instead jump back and ask for another guess
@@ -510,7 +538,12 @@ finish:
 CheckGuess endp
 
 OutputGuesses proc USES eax ebx ecx esi
-    mov ecx, 26                ;Need to check 26 letters
+	mov dh, guessesY		;Move to the guesses output coordinates
+	inc dh					;Leave room for the box around the guesses
+	mov dl, guessesX
+	inc dl					;Leave room for the box around the guesses
+	call Gotoxy
+    mov ecx, 26             ;Need to check 26 letters
     xor esi, esi            ;Zero our index
     xor ebx, ebx            ;We will need a zero register
 WalkAlphaleft:
@@ -526,7 +559,10 @@ loop WalkAlphaleft
     ret
 OutputGuesses endp
 
-OutputDisplayWord proc uses eax ecx esi
+OutputDisplayWord proc uses eax ecx edx esi
+	mov dl, displayWordX		;Set coordinates at which to write the display word
+	mov dh, displayWordY		
+	Call Gotoxy
     mov ecx, targetWordLength    ;load our loop counter
     xor esi, esi                ;clear our index
 WalkDisplayWord:                ;walk the display word and output each character
@@ -538,13 +574,16 @@ loop WalkDisplayWord
 OutputDisplayWord endp
 
 ;Note that we use branching logic here.
-;Since all of the values are set before the proc is called
-;we should avoid any branch prediction issues
+;Should work to fix this
 CheckState proc uses eax edx
-    mov eax, failState            ;load the failure count into eax
-    cmp eax, maxFailure            ;and compare it with the maximum failure count
-    jle NoFail                    ;If we're below the max, check if we have succeeded
-    mov edx, OFFSET messageFail        ;Otherwise prep the failure message
+	call ClearStatusMessage
+	mov dl, statusMessageX			;Go to the status message coordinates
+	mov dh, statusMessageY
+	call Gotoxy
+    mov eax, failState            	;load the failure count into eax
+    cmp eax, maxFailure            	;and compare it with the maximum failure count
+    jl NoFail          				;If we're below the max, check if we have succeeded
+    mov edx, OFFSET messageFail   	;Otherwise prep the failure message
     inc player1Score
     jmp Output                    ;And skip to the output step
 NoFail:
@@ -648,14 +687,19 @@ TestGame proc
     call GetTargetWord
     call Clrscr
     mov ecx, 100
+	call TestDisplayUI
 GameLoop:
     call GetGuess
     call WriteChar
-    call Crlf
     call CheckGuess
-    call Crlf
-    call TestDisplayUI
+	call DrawHangman
+	call OutputGuesses
+	call OutputDisplayWord
 
+	;Go to the bottom of the screen
+	mov dh, 24
+	mov dl, 0
+	call Gotoxy
     mov eax, failState
     call WriteInt
     call Crlf
@@ -672,7 +716,7 @@ TestGame endp
 
 
 TestDisplayUI proc
-    call Clrscr
+    ;call Clrscr
 
 	mov dh, 0
     mov dl, 35
@@ -733,12 +777,11 @@ LOOP BOTnameBoxes
 ; Gallows/hangman
     mov startx, 42
     mov starty, 5
-    call Gotoxy
-    mov failstate, 5
+    ;call Gotoxy
     call DrawHangman
 ; box around guessed letters
-    mov dh, 16
-    mov dl, 27
+    mov dh, guessesy
+    mov dl, guessesX
     Call Gotoxy
     mov al, 3Dh
     Call WriteChar
@@ -978,9 +1021,9 @@ LOOP BOTnameBoxes
     mov dl, 0
     Call Gotoxy
     
-; Display correct guesses
-    mov dh, 10
-    mov dl, 60
+; Display blank target word
+    mov dh, displayWordX
+    mov dl, displayWordY
     Call Gotoxy
     Call OutputDisplayWord
 
