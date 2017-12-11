@@ -99,7 +99,7 @@ DrawHangman proc uses edx eax ebx ecx
     call Gotoxy
     mov al, 5Fh
     call WriteChar
-; 
+	
     ; loop for the gallow
     mov ecx, 9
     mov dh, starty
@@ -205,17 +205,6 @@ LOOP L1
     call Gotoxy
     mov al, 4Fh 
     call WriteChar 
-
-; creates void space for the "press any key to continue" 
-    mov dh, starty
-    add dh, 20
-    mov dl, startx
-    add dl, 20
-
-    call Gotoxy
-    mov al, 20h
-    call WriteChar
-    call crlf 
 
 ; body
     inc ebx                ;We want to draw the body if failState >= 2
@@ -552,7 +541,6 @@ OutputDisplayWord endp
 ;Since all of the values are set before the proc is called
 ;we should avoid any branch prediction issues
 CheckState proc uses eax edx
-<<<<<<< HEAD
     mov eax, failState            ;load the failure count into eax
     cmp eax, maxFailure            ;and compare it with the maximum failure count
     jle NoFail                    ;If we're below the max, check if we have succeeded
@@ -569,30 +557,8 @@ NoFail:
 Output:
     call WriteString            ;Output fail or success message
     call Crlf
-Fini: ;
-
+Fini: 
     ret
-=======
-	mov eax, failState			;load the failure count into eax
-	cmp eax, maxFailure			;and compare it with the maximum failure count
-	jle NoFail					;If we're below the max, check if we have succeeded
-	mov edx, OFFSET messageFail		;Otherwise prep the failure message
-	inc player1Score
-	jmp Output					;And skip to the output step
-NoFail:
-	mov eax, successState		;Load the current number of successfully guessed letters
-	cmp eax, targetWordLength	;and compare it with the total number of letters in the word
-	jl Fini						;If the correct letters are fewer than the total letters, we ain't done yet. Skip to the end
-	mov edx, OFFSET messageSuccess		;Otherwise, the guesser has won so load the success message
-	inc player2Score
-	;jmp Output					;Don't currently need to jump to Output, but if this order changes we may
-Output:
-	call WriteString			;Output fail or success message
-	call Crlf
-Fini: ;
-
-	ret
->>>>>>> e8f2daa8bbedcb36789f09729e0bb4ce78980a47
 CheckState endp
 
 TestGetNames proc
@@ -678,7 +644,6 @@ TestGameLogic proc
 TestGameLogic endp    
 
 TestGame proc
-<<<<<<< HEAD
     call GetNames
     call GetTargetWord
     call Clrscr
@@ -691,7 +656,6 @@ GameLoop:
     call Crlf
     call TestDisplayUI
 
-
     mov eax, failState
     call WriteInt
     call Crlf
@@ -702,41 +666,15 @@ GameLoop:
     call CheckState
     call DisplayScore
     call roleAssignment
-=======
-	call GetNames
-	call GetTargetWord
-	call Clrscr
-	mov ecx, 100
-GameLoop:
-	call GetGuess
-	call WriteChar
-	call Crlf
-	call CheckGuess
-	call Crlf
-	call TestDisplayUI
-
-
-	mov eax, failState
-	call WriteInt
-	call Crlf
-	mov eax, successState
-	call WriteInt
-
-	call Crlf
-	call CheckState
-	call DisplayScore
-	call roleAssignment
->>>>>>> e8f2daa8bbedcb36789f09729e0bb4ce78980a47
 loop GameLoop
     ret
 TestGame endp
 
 
 TestDisplayUI proc
-<<<<<<< HEAD
     call Clrscr
 
-mov dh, 0
+	mov dh, 0
     mov dl, 35
     call Gotoxy
 
@@ -1057,336 +995,9 @@ LOOP BOTnameBoxes
     Call Gotoxy
     mov eax, currentRound
     call WriteInt
-=======
-	call Clrscr
-
-mov dh, 0
-	mov dl, 35
-	call Gotoxy
-
-	mov ECX, 40
-	mov al, 3Dh
-TOPnameBoxes:
-	call WriteChar
-	inc dl
-LOOP TOPnameBoxes
-
-	mov dh, 2
-	mov dl, 35
-	call Gotoxy
-	mov ECX, 40
-	mov al, 3Dh
-	BOTnameBoxes:
-	call WriteChar
-	inc dl
-LOOP BOTnameBoxes	
-	
-	mov dh, 1
-	mov dl, 35
-	call Gotoxy
-	mov al, 7Ch
-	call WriteChar
-
-	mov dl, 52
-	call Gotoxy
-	call WriteChar
-
-	mov dl, 55
-	call Gotoxy
-	call WriteChar
-
-	mov dl, 58
-	call Gotoxy
-	call WriteChar
-
-	mov dl, 74
-	call Gotoxy
-	call WriteChar
-
-
-	mov dh, 1
-	mov dl, 41
-	call Gotoxy
-	mov edx, OFFSET player1Name
-	call WriteString
-
-	mov dh, 1
-	mov dl, 62
-	call Gotoxy
-	mov edx, OFFSET player2Name
-	call WriteString
-
-; Gallows/hangman
-	mov startx, 42
-	mov starty, 5
-	call Gotoxy
-	mov failstate, 5
-	call DrawHangman
-; box around guessed letters
-	mov dh, 16
-	mov dl, 27
-	Call Gotoxy
-	mov al, 3Dh
-	Call WriteChar
-
-	add dl, 2
-	Call Gotoxy
-	Call WriteChar
-
-	add dl, 2
-	Call Gotoxy
-	Call WriteChar
-
-	add dl, 2
-	Call Gotoxy
-	Call WriteChar
-
-	add dl, 2
-	Call Gotoxy
-	Call WriteChar
-
-	add dl, 2
-	Call Gotoxy
-	Call WriteChar
-
-	add dl, 2
-	Call Gotoxy
-	Call WriteChar
-
-	add dl, 2
-	Call Gotoxy
-	Call WriteChar
-
-	add dl, 2
-	Call Gotoxy
-	Call WriteChar
-
-	add dl, 2
-	Call Gotoxy
-	Call WriteChar
-
-	add dl, 2
-	Call Gotoxy
-	Call WriteChar
-
-	add dl, 2
-	Call Gotoxy
-	Call WriteChar
-
-	add dl, 2
-	Call Gotoxy
-	Call WriteChar
-
-	add dl, 2
-	Call Gotoxy
-	Call WriteChar
-
-	add dl, 2
-	Call Gotoxy
-	Call WriteChar
-
-	add dl, 2
-	Call Gotoxy
-	Call WriteChar
-
-	add dl, 2
-	Call Gotoxy
-	Call WriteChar
-
-	add dl, 2
-	Call Gotoxy
-	Call WriteChar
-
-	add dl, 2
-	Call Gotoxy
-	Call WriteChar
-
-	add dl, 2
-	Call Gotoxy
-	Call WriteChar
-
-	add dl, 2
-	Call Gotoxy
-	Call WriteChar
-
-	add dl, 2
-	Call Gotoxy
-	Call WriteChar
-
-	add dl, 2
-	Call Gotoxy
-	Call WriteChar
-
-	add dl, 2
-	Call Gotoxy
-	Call WriteChar
-
-	add dl, 2
-	Call Gotoxy
-	Call WriteChar
-
-	add dl, 2
-	Call Gotoxy
-	Call WriteChar
-
-
-	add dl, 2
-	Call Gotoxy
-	Call WriteChar
-
-	mov dh, 17
-	mov dl, 26
-	Call Gotoxy
-	mov al, 7ch
-	Call WriteChar
-
-	add dl, 54
-	Call Gotoxy
-	Call WriteChar
-
-	mov dh, 18
-	mov dl, 27
-	Call Gotoxy
-	mov al, 3Dh
-	Call WriteChar
-
-	add dl, 2
-	Call Gotoxy
-	Call WriteChar
-
-	add dl, 2
-	Call Gotoxy
-	Call WriteChar
-
-	add dl, 2
-	Call Gotoxy
-	Call WriteChar
-
-	add dl, 2
-	Call Gotoxy
-	Call WriteChar
-
-	add dl, 2
-	Call Gotoxy
-	Call WriteChar
-
-	add dl, 2
-	Call Gotoxy
-	Call WriteChar
-
-	add dl, 2
-	Call Gotoxy
-	Call WriteChar
-
-	add dl, 2
-	Call Gotoxy
-	Call WriteChar
-
-	add dl, 2
-	Call Gotoxy
-	Call WriteChar
-
-	add dl, 2
-	Call Gotoxy
-	Call WriteChar
-
-	add dl, 2
-	Call Gotoxy
-	Call WriteChar
-
-	add dl, 2
-	Call Gotoxy
-	Call WriteChar
-
-	add dl, 2
-	Call Gotoxy
-	Call WriteChar
-
-	add dl, 2
-	Call Gotoxy
-	Call WriteChar
-
-	add dl, 2
-	Call Gotoxy
-	Call WriteChar
-
-	add dl, 2
-	Call Gotoxy
-	Call WriteChar
-
-	add dl, 2
-	Call Gotoxy
-	Call WriteChar
-
-	add dl, 2
-	Call Gotoxy
-	Call WriteChar
-
-	add dl, 2
-	Call Gotoxy
-	Call WriteChar
-
-	add dl, 2
-	Call Gotoxy
-	Call WriteChar
-
-	add dl, 2
-	Call Gotoxy
-	Call WriteChar
-
-	add dl, 2
-	Call Gotoxy
-	Call WriteChar
-
-	add dl, 2
-	Call Gotoxy
-	Call WriteChar
-
-	add dl, 2
-	Call Gotoxy
-	Call WriteChar
-
-	add dl, 2
-	Call Gotoxy
-	Call WriteChar
-
-	add dl, 2
-	Call Gotoxy
-	Call WriteChar
-
-; Output guesses
-	mov dh, 17
-	mov dl, 28
-	Call Gotoxy
-	call OutputGuesses
-
-	mov dh, 20
-	mov dl, 0
-	Call Gotoxy
-	
-; Display correct guesses
-	mov dh, 10
-	mov dl, 60
-	Call Gotoxy
-	Call OutputDisplayWord
-
-	mov dh, 0
-	mov dl, 0
-	Call Gotoxy
-	mov edx, OFFSET currentRoundmessage
-	call WriteString
-
-	mov dh, 0
-	mov dl, 14
-	Call Gotoxy
-	mov eax, currentRound
-	call WriteInt
->>>>>>> e8f2daa8bbedcb36789f09729e0bb4ce78980a47
-
 TestDisplayUI endp
 
 DisplayScore proc
-<<<<<<< HEAD
     mov dh, 1
     mov dl, 53
     call Gotoxy
@@ -1403,36 +1014,17 @@ DisplayScore proc
     mov dl, 0
     call Gotoxy
     ret
-=======
-	mov dh, 1
-	mov dl, 53
-	call Gotoxy
-	mov eax, player1Score
-	call WriteInt
-
-	mov dh, 1
-	mov dl, 56
-	call Gotoxy
-	mov eax, player2Score
-	call WriteInt
-
-	mov dh, 20
-	mov dl, 0
-	call Gotoxy
-	ret
->>>>>>> e8f2daa8bbedcb36789f09729e0bb4ce78980a47
 DisplayScore endp
 
 TestHangedMan proc
     mov startx, 10
     mov starty, 10
- ;mov failState, 0
+	;mov failState, 0
     call DrawHangman
     ret
 TestHangedMan endp
 
 checkRoles proc
-<<<<<<< HEAD
     mov ECX, 100
     RolesCheck:
     ;
@@ -1443,18 +1035,6 @@ checkRoles proc
     ;
     loop RolesCheck
     ret
-=======
-	mov ECX, 100
-	RolesCheck:
-	;
-	; here we check to see if the round is even or not, 
-	; player 1 start the game as executioner, player 2 as guesser
-	; so every even round, player 1 will be the guesser
-	; im not sure how to make it switch with each new round
-	;
-	loop RolesCheck
-	ret
->>>>>>> e8f2daa8bbedcb36789f09729e0bb4ce78980a47
 checkRoles endp
 
 
@@ -1465,7 +1045,6 @@ roleAssignment proc
 ; we can use the current round as an indicator for when to jump
 ; if the round is even then player 1 is the guesser, so the player1guesser message should pop up
 ;
-<<<<<<< HEAD
 ; prints next to player 1s name when they are the guesser    
     mov dh, 1
     mov dl, 26
@@ -1517,58 +1096,5 @@ main proc
     call TestGame
     ;call TestHangedMan
     invoke ExitProcess,0
-=======
-; prints next to player 1s name when they are the guesser	
-	mov dh, 1
-	mov dl, 26
-	call Gotoxy
-	mov edx, OFFSET player1guesser
-	call WriteString
-
-; heres to clear out the player 2's guesser mark	
-	mov ECX, 4
-	mov dl, 76
-	mov dh, 1
-	mov al, 20h ; space
-L1:
-	call WriteChar
-LOOP L1
-
-
-; prints next to player 2s name when they are the guesser	
-	mov dh, 1
-	mov dl, 76
-	call Gotoxy
-	mov edx, OFFSET player2guesser
-	Call WriteString
-
-; heres to clear out player 1s guesser mark	
-	mov ECX, 4
-	mov dl, 26
-	mov dh, 1
-	mov al, 20h ; space
-L2:
-	call WriteChar
-LOOP L2
-
-; move gotoxy back to the end
-	mov dh, 20
-	mov dl, 0
-	call Gotoxy
-
-	ret
-roleAssignment endp
-
-main proc
-	;call DisplayScore
-	;call Getnames
-	;call TestNameBoxes
-	;call TestDisplayUI
-	;call TestIo
-	;call TestGameLogic
-	call TestGame
-	;call TestHangedMan
-	invoke ExitProcess,0
->>>>>>> e8f2daa8bbedcb36789f09729e0bb4ce78980a47
 main endp
 end main
