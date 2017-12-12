@@ -446,6 +446,7 @@ GetWordMaxLength proc
     push OFFSET wordMaxLength
     push OFFSET promptWordMaxLength
     call CallAndResponseInt
+	inc wordMaxLength
     ret
 GetWordMaxLength endp
 
@@ -477,7 +478,7 @@ CreateDisplayWord:
     and targetWord[esi], 0DFh    ;And while we're at it, let's make targetWord uppercase for ease of comparison
     inc esi                        ;increment index
 loop CreateDisplayWord
-	mov ecx, 25
+	mov ecx, 26					;Walk each letter of the alphabet
 	mov esi, 0
 ClearGuesses:					;Get rid of all guessed data
 	mov al, alphabet[esi]		;Copy the index value from alphabet
@@ -494,7 +495,7 @@ ClearStatusMessage proc uses ecx edx
 	mov dh, statusMessageY
 	call Gotoxy
 	mov al, 20h					;Load a blank space into our WriteChar buffer
-	mov ecx, 200				;Load loop counter
+	mov ecx, 150				;Load loop counter
 ClearMessage:
 	call WriteChar
 	inc dl
@@ -509,7 +510,7 @@ ClearGuessMessage proc uses ecx edx
 	dec dh						;If we ever have a 0 y-val for statusMessage, this will be a problem!
 	call Gotoxy
 	mov al, 20h					;Load a blank space into our WriteChar buffer
-	mov ecx, 200				;Load loop counter
+	mov ecx, 150				;Load loop counter
 ClearMessage:
 	call WriteChar
 	inc dl
@@ -525,7 +526,7 @@ ClearAuxMessage proc uses ecx edx
 	inc dh						;And then go down one line
 	call Gotoxy
 	mov al, 20h					;Load a blank space into our WriteChar buffer
-	mov ecx, 200				;Load loop counter
+	mov ecx, 150				;Load loop counter
 ClearMessage:
 	call WriteChar
 	inc dl
@@ -1109,6 +1110,8 @@ RoundStart:
 	call roleAssignment			
 	call DisplayUI
 	call GetTargetWord
+	call OutputGuesses
+	call OutputDisplayWord
 	call ClearStatusMessage
 	call PlayOneWord
 	call DisplayScore
